@@ -1,0 +1,116 @@
+{
+  "portfolio": {
+    "description": "Current holdings - TOP PRIORITY",
+    "date": "2025-11-07T02:13:00Z",
+    "time": "20:13:00",
+    "timezone": "America/Chicago",
+    "timezone_offset": -6,
+    "timezone_abbreviation": "CST",
+    "timezone_name": "Central Standard Time",
+    "timezone_id": "America/Chicago",
+    "timezone_country": "United States",
+    "timezone_region": "America",
+    "stocks": [
+      {
+        "symbol": "AMD",
+        "shares": 9.168,
+        "avg_cost": 218.15,
+        "current_price": 236.35,
+        "equity": 2166.86
+      },
+      {
+        "symbol": "TSLA",
+        "shares": 1.7,
+        "avg_cost": 424.79,
+        "current_price": 449.68,
+        "equity": 764.30
+      },
+      {
+        "symbol": "AVGO",
+        "shares": 4.318,
+        "avg_cost": 347.38,
+        "current_price": 354.34,
+        "equity": 1530.05
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 0.167,
+        "avg_cost": 113.48,
+        "current_price": 187.77,
+        "equity": 31.44
+      },
+      {
+        "symbol": "TSM",
+        "shares": 5.101,
+        "avg_cost": 294.05,
+        "current_price": 288.90,
+        "equity": 1473.75
+      },
+      {
+        "symbol": "SNDX",
+        "shares": 64.265,
+        "avg_cost": 15.56,
+        "current_price": 14.69,
+        "equity": 944.06
+      },
+      {
+        "symbol": "ASTS",
+        "shares": 19.694,
+        "avg_cost": 76.17,
+        "current_price": 64.48,
+        "equity": 1269.87
+      },
+      {
+        "symbol": "QUBT",
+        "shares": 48.594,
+        "avg_cost": 20.58,
+        "current_price": 13.18,
+        "equity": 640.48
+      },
+      {
+        "symbol": "RGTI",
+        "shares": 41.934,
+        "avg_cost": 47.69,
+        "current_price": 34.60,
+        "equity": 1450.91
+      }
+    ]
+  },
+  "watchlist": {
+    "description": "Future investment candidates - 2nd PRIORITY",
+    "stocks": [
+      "AAPL",
+      "LCID",
+      "AMZN",
+      "RIVN",
+      "MSFT",
+      "GOOGL",
+      "F",
+      "AMC",
+      "DIS",
+      "WMT",
+      "NFLX",
+      "KO",
+      "AEE",
+      "CEG",
+      "CNX",
+      "D",
+      "DUK",
+      "EQT",
+      "ETR",
+      "EXE",
+      "FRMI",
+      "LNG",
+      "OKLO",
+      "PCG",
+      "PWR",
+      "RRC",
+      "SMR"
+    ]
+  },
+  "priority_order": [
+    "portfolio",
+    "watchlist",
+    "discovered"
+  ]
+}

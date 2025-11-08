@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+htmlcov/
+.coverage
+.pytest_cache/
+*.log
+
+# Outputs
+outputs/*.json
+data/cache/*
+!data/cache/.gitkeep
+
+# Deployment
+*.tfstate
+*.tfstate.backup
+.terraform/
+

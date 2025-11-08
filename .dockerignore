@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.log
+
+# Development
+.env.local
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Documentation (not needed in container)
+*.md
+!README.md
+
+# Git
+.git/
+.gitignore
+
+# Reference implementations (not needed in production)
+refs/
+
+# Cache
+data/cache/*
+*.cache
+
+# Jupyter
+*.ipynb
+.ipynb_checkpoints/
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+

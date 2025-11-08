@@ -1,0 +1,16 @@
+# Terraform Variables Example
+# Copy this file to terraform.tfvars and fill in your values
+# NEVER commit terraform.tfvars to git!
+
+railway_token          = "your_railway_api_token_here"
+openrouter_api_key    = "your_openrouter_api_key_here"
+alpha_vantage_api_key = "your_alpha_vantage_api_key_here"
+telegram_bot_token    = "your_telegram_bot_token_here"
+
+# Optional
+telegram_allowed_users = "123456789,987654321"
+environment           = "production"
+github_repo          = "https://github.com/YOUR_USERNAME/kubera"
+github_branch        = "main"
+log_level            = "INFO"
+

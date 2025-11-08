@@ -1,0 +1,264 @@
+---
+collect_market_data:
+  description: |-
+    Gather comprehensive market data for {stock_symbols} including:
+    - Current stock prices and daily/weekly/monthly performance
+    - Historical price data (1Y, 5Y, 10Y timeframes)
+    - Volume analysis and trading patterns
+    - Key technical indicators: 50-day and 200-day moving averages, RSI, MACD, Bollinger Bands
+    - Market capitalization, beta, volatility metrics
+    - Dividend yield and P/E ratios
+    - Pre-market and after-hours trading data
+
+    Access financial websites like Yahoo Finance, MarketWatch, and other reliable financial data sources. Ensure data accuracy by cross-referencing multiple sources.
+  expected_output: A comprehensive market data report for each stock in {stock_symbols}
+    containing current prices, historical performance metrics, technical indicators,
+    and key financial ratios formatted as structured data with timestamps.
+  agent: market_data_collector
+analyze_news_and_sentiment:
+  description: |-
+    Monitor and analyze current news and market sentiment for {stock_symbols} by:
+    - Searching for recent news from financial sources (Bloomberg, Reuters, CNBC, WSJ)
+    - Identifying key catalysts: earnings announcements, FDA approvals, product launches, regulatory changes
+    - Analyzing social media sentiment and discussion volume
+    - Tracking insider trading activity and institutional movements
+    - Evaluating macroeconomic factors affecting the stocks
+    - Assessing market sentiment scores and momentum indicators
+    - Identifying potential risks and opportunities from news flow
+
+    Focus on news from the last 30 days with emphasis on the most recent 7 days for immediate impact assessment.
+  expected_output: A detailed sentiment analysis report for each stock including news
+    summary, sentiment scores (1-10), key catalysts identification, potential risks
+    and opportunities, and timeline of important upcoming events that could impact
+    stock performance.
+  agent: news_sentiment_analyst
+review_sec_filings:
+  description: |-
+    Extract and analyze critical information from recent SEC filings for {stock_symbols} including:
+    - Latest 10-K and 10-Q filings for fundamental business changes
+    - Recent 8-K forms for material corporate events
+    - Proxy statements for executive compensation and governance changes
+    - 13F filings to track institutional ownership patterns
+    - Schedule 13D/13G for significant shareholder changes
+    - Insider trading transactions and patterns
+    - Risk factor analysis and legal proceedings updates
+    - Management discussion and analysis (MD&A) sections
+    - Forward-looking guidance and business strategy changes
+
+    Access SEC EDGAR database and company investor relations pages for the most recent filings within the last 6 months.
+  expected_output: A comprehensive SEC filings analysis report for each stock covering
+    material changes, insider activity, institutional ownership trends, risk assessments,
+    and key business developments that could impact stock valuation and future performance.
+  agent: sec_filings_analyst
+social_media_stock_discovery:
+  description: |-
+    Monitor and analyze social media platforms to identify emerging stock opportunities that are NOT currently in the portfolio {stock_symbols}. Focus on secondary priority after portfolio analysis. Search and analyze:
+
+    **Platforms to Monitor:**
+    - Reddit (r/wallstreetbets, r/stocks, r/investing, r/SecurityAnalysis)
+    - X/Twitter (financial influencers, trending $tickers, StockTwits)
+    - YouTube (financial channels, earnings reactions, technical analysis videos)
+    - Discord servers (trading communities, investment groups)
+    - TikTok and Instagram (retail investor sentiment, viral stocks)
+
+    **Analysis Focus:**
+    - Mention volume and sentiment trending upward
+    - Unusual social media activity and engagement spikes
+    - Influencer coverage and recommendation patterns
+    - Reddit post engagement (upvotes, comments, awards)
+    - Hashtag trending patterns and viral potential
+    - Community sentiment shifts from bearish to bullish
+
+    **Due Diligence:**
+    - Verify legitimate business fundamentals (not pump-and-dump)
+    - Check for upcoming catalysts (earnings, product launches, FDA approvals)
+    - Assess market cap and liquidity constraints
+    - Identify potential risks and red flags
+    - Compare social sentiment with institutional analyst coverage
+
+    **Risk Assessment:**
+    - Separate genuine opportunities from hype/manipulation
+    - Check for coordination patterns or bot activity
+    - Assess sustainability of social momentum
+    - Evaluate entry timing and competition risk
+
+    Discover 3-5 high-potential stocks with detailed analysis of their social media presence and investment thesis.
+  expected_output: |-
+    A social media intelligence report containing:
+
+    **Top Social Media Stock Discoveries:**
+
+    For each discovered stock (3-5 stocks):
+    - **Stock Symbol & Company**: Basic details
+    - **Social Media Score**: 1-10 based on engagement and sentiment
+    - **Trending Platforms**: Where it's gaining traction
+    - **Key Mentions**: Specific posts, influencers, or communities
+    - **Sentiment Analysis**: Overall positive/negative/neutral with percentage
+    - **Catalyst Potential**: Upcoming events driving interest
+    - **Investment Thesis**: Why social media attention is justified
+    - **Risk Assessment**: Potential red flags or concerns
+    - **Entry Strategy**: Optimal timing and price levels
+    - **Priority Ranking**: High/Medium/Low investment priority
+
+    **Social Market Overview:**
+    - Most mentioned sectors and themes
+    - General retail investor sentiment trends
+    - Emerging narratives and investment themes
+    - Risk of social media manipulation
+
+    **Action Recommendations:**
+    - Top 2 stocks requiring immediate research
+    - Stocks to watch for entry opportunities
+    - Social sentiment trends to monitor
+
+    Focus on legitimate investment opportunities backed by fundamentals, not just social hype.
+  agent: social_media_intelligence_analyst
+perform_technical_analysis:
+  description: |-
+    Conduct comprehensive technical analysis for {stock_symbols} using the market data collected. Analyze:
+    - Trend identification across multiple timeframes (daily, weekly, monthly)
+    - Support and resistance levels with historical significance
+    - Chart patterns (head and shoulders, triangles, flags, wedges)
+    - Momentum indicators: RSI levels, MACD crossovers, momentum divergences
+    - Moving average relationships and crossover signals
+    - Volume analysis and accumulation/distribution patterns
+    - Bollinger Bands positioning and squeeze conditions
+    - Fibonacci retracement and extension levels
+    - Seasonal patterns and cyclical behavior
+    - Entry and exit point identification
+    - Stop-loss and take-profit level recommendations
+
+    Generate specific buy/sell timing signals with confidence levels and risk assessments.
+  expected_output: A detailed technical analysis report for each stock including current
+    trend analysis, key support/resistance levels, momentum signals, chart patterns,
+    optimal entry/exit points with specific price targets, stop-loss recommendations,
+    and confidence scores (1-100%) for each trading signal.
+  agent: technical_analysis_expert
+  context:
+  - collect_market_data
+advanced_investment_decision_analysis:
+  description: "Conduct sophisticated analysis of {stock_symbols} portfolio positions
+    to generate high-confidence sell/hold/add recommendations. Apply multiple analytical
+    frameworks including:\n\nQUANTITATIVE ANALYSIS:\n- Calculate intrinsic value using
+    DCF, DDM, and comparable company analysis\n- Analyze technical indicators (RSI,
+    MACD, Bollinger Bands, support/resistance)\n- Assess risk-adjusted returns (Sharpe
+    ratio, maximum drawdown, beta analysis)\n- Evaluate earnings quality and financial
+    health scores\n- Calculate position sizing and portfolio allocation optimization\n\nQUALITATIVE
+    ASSESSMENT:\n- Management quality and strategic direction evaluation  \n- Competitive
+    positioning and moat analysis\n- Industry trends and regulatory impact assessment\n-
+    ESG factors and sustainability considerations\n\nBEHAVIORAL FINANCE:\n- Market
+    sentiment analysis and crowd psychology indicators\n- Institutional vs retail
+    positioning analysis\n- Options flow and unusual activity detection\n- Insider
+    trading patterns and SEC filing insights\n\nFor each position, provide:\n- DECISION:
+    Clear sell/hold/add recommendation with confidence level (1-100%)\n- TARGET PRICE:
+    12-month price target with upside/downside scenarios  \n- RISK SCORE: Comprehensive
+    risk assessment (1-10 scale)\n- CATALYSTS: Key events and timelines to monitor\n-
+    RATIONALE: Detailed multi-factor analysis supporting the decision\n\nPrioritize
+    existing portfolio analysis over new opportunities."
+  expected_output: A comprehensive investment decision report for each stock in {stock_symbols}
+    containing specific sell/hold/add recommendations, confidence percentages, target
+    prices, risk scores (1-10), timeline for decision review, key catalysts to monitor,
+    and detailed multi-factor rationale. Include portfolio-level recommendations for
+    rebalancing and risk management. Format as structured analysis with clear action
+    items.
+  agent: advanced_investment_researcher
+  context:
+  - collect_market_data
+  - analyze_news_and_sentiment
+  - review_sec_filings
+  - perform_technical_analysis
+send_telegram_alerts:
+  description: "Send comprehensive investment alerts to Telegram chat/channel using
+    the provided {telegram_bot_token} and {telegram_chat_id}. Transform the complete
+    analysis into clear, actionable notifications with proper Markdown formatting.\n\n**Alert
+    Structure:**\n\n1. **Priority Portfolio Actions** (from investment decision analysis):\n
+    \  - Immediate SELL recommendations with reasons\n   - Urgent HOLD decisions requiring
+    attention\n   - Risk alerts and stop-loss recommendations\n   - Critical price
+    levels and catalysts to monitor\n\n2. **New Investment Opportunities** (from social
+    media intelligence):\n   - Top social media discovered stocks\n   - Entry strategies
+    and timing recommendations\n   - Risk assessments and due diligence notes\n\n**Message
+    Formatting:**\n- Use Telegram Markdown for clear formatting\n- Include emojis
+    for visual impact and urgency levels\n- Break complex information into digestible
+    sections\n- Highlight immediate actions vs. watch items\n- Format as actionable
+    bullets with specific instructions\n\n**Urgency Levels:**\n- \U0001F6A8 URGENT:
+    Immediate action required (high-confidence sells)\n- ⚠️ ATTENTION: Important decisions
+    needed within days\n- \U0001F4CA UPDATE: General portfolio status and opportunities\n-
+    \U0001F4A1 DISCOVERY: New stocks to research and consider\n\nCreate professional,
+    clear messages that busy investors can quickly understand and act upon. Each message
+    should be self-contained with all necessary context."
+  expected_output: |-
+    Successfully formatted and sent Telegram messages containing:
+
+    **Message 1 - Portfolio Alerts:**
+    - Header with timestamp and alert type
+    - Immediate sell/hold recommendations with confidence scores
+    - Specific action items (sell price, stop-loss, timeline)
+    - Risk warnings and key levels to monitor
+    - Total portfolio risk assessment
+
+    **Message 2 - New Opportunities (if significant findings):**
+    - Top social media discovered stocks
+    - Investment thesis and social sentiment scores
+    - Entry strategies and risk assessments
+    - Priority ranking and research recommendations
+
+    **Confirmation:**
+    - Message delivery confirmation
+    - Error handling if delivery fails
+    - Summary of alerts sent
+
+    Format using proper Telegram Markdown with:
+    - **Bold** for stock symbols and actions
+    - *Italic* for confidence scores and rationale
+    - `Code` for price levels and specific values
+    - Line breaks for readability
+    - Emojis for urgency and visual impact
+
+    Each message should be professional, actionable, and contain all context needed for investment decisions.
+  agent: communication_manager
+  context:
+  - advanced_investment_decision_analysis
+  - social_media_stock_discovery
+final_portfolio_strategy_report:
+  description: "Synthesize all analysis to create a comprehensive portfolio strategy
+    report prioritizing existing positions. Combine insights from advanced investment
+    decisions, social media discoveries, and market analysis to provide:\n\nPORTFOLIO
+    PRIORITY MATRIX:\n- Immediate Actions: Stocks requiring urgent sell/buy decisions\n-
+    Short-term Watch: Positions needing monitoring (1-4 weeks)  \n- Long-term Holds:
+    Stable positions with quarterly review cycles\n- New Opportunities: Social media
+    discoveries worth considering\n\nSTRATEGIC RECOMMENDATIONS:\n- Portfolio rebalancing
+    suggestions based on risk-adjusted returns\n- Sector allocation optimization considering
+    correlation and diversification\n- Cash allocation strategy for new opportunities
+    vs. existing positions\n- Risk management updates including position sizing and
+    stop-losses\n\nEXECUTION ROADMAP:\n- Priority 1: Immediate portfolio actions (sell/add
+    existing positions)  \n- Priority 2: New position entries from social media discoveries\n-
+    Priority 3: Long-term portfolio optimization and monitoring setup\n\nInclude detailed
+    rationale for prioritization decisions and implementation timeline."
+  expected_output: A comprehensive Portfolio Intelligence Report containing specific
+    buy/sell/hold recommendations for each stock, optimal timing strategies, risk
+    assessments (1-10), price targets, confidence levels (%), portfolio allocation
+    suggestions, and a prioritized action plan with key catalysts to monitor. Include
+    a summary dashboard with top 3 recommendations and immediate action items.
+  agent: portfolio_strategy_manager
+  context:
+  - send_telegram_alerts
+send_investment_alerts:
+  description: "Format and send comprehensive investment alerts via available communication
+    channels. Create professional, actionable messages with all analysis results including:\n\nPRIORITY
+    ALERTS FOR PORTFOLIO:\n- \U0001F6A8 URGENT SELL recommendations with specific
+    reasoning\n- ⚠️  HOLD decisions with monitoring conditions\n- \U0001F4C8 ADD/BUY
+    MORE opportunities with target prices\n- Include confidence levels, risk scores,
+    and decision timelines\n\nSECONDARY - NEW OPPORTUNITIES:\n- \U0001F50D Top social
+    media stock discoveries  \n- ⭐ High-conviction new investment ideas\n- \U0001F4CA
+    Portfolio diversification recommendations\n\nMESSAGE FORMAT:\n- Clear action items
+    with supporting rationale\n- Risk assessments and confidence levels\n- Price targets
+    and entry/exit strategies\n- Timeline for decision implementation\n- Key catalysts
+    and monitoring points\n\nInclude proper investment disclaimers and ensure all
+    recommendations are actionable and well-reasoned."
+  expected_output: Professional investment alert messages containing priority-ranked
+    buy/sell/hold recommendations, detailed analysis summaries, risk assessments,
+    and clear action plans. Format for easy consumption and decision-making.
+  agent: communication_manager
+  context:
+  - advanced_investment_decision_analysis
+  - final_portfolio_strategy_report
