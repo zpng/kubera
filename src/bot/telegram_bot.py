@@ -103,48 +103,48 @@ class TelegramBot:
         user = update.effective_user
         
         if not self._check_user_allowed(user.id):
-            await update.message.reply_text("❌ Unauthorized. Contact admin for access.")
+            await update.message.reply_text("❌ 未授权。请联系管理员获取访问权限。")
             return
         
         keyboard = [
             [
-                InlineKeyboardButton("📊 Portfolio", callback_data="portfolio"),
-                InlineKeyboardButton("👀 Watchlist", callback_data="watchlist"),
+                InlineKeyboardButton("📊 持仓", callback_data="portfolio"),
+                InlineKeyboardButton("👀 自选", callback_data="watchlist"),
             ],
             [
-                InlineKeyboardButton("🔍 Analyze Portfolio", callback_data="analyze_portfolio"),
-                InlineKeyboardButton("🔍 Analyze Watchlist", callback_data="analyze_watchlist"),
+                InlineKeyboardButton("🔍 分析持仓", callback_data="analyze_portfolio"),
+                InlineKeyboardButton("🔍 分析自选", callback_data="analyze_watchlist"),
             ],
             [
-                InlineKeyboardButton("🚀 Discover Stocks", callback_data="discover"),
-                InlineKeyboardButton("📈 Full Analysis", callback_data="analyze_all"),
+                InlineKeyboardButton("🚀 发现股票", callback_data="discover"),
+                InlineKeyboardButton("📈 全量分析", callback_data="analyze_all"),
             ],
             [
-                InlineKeyboardButton("⚙️ Status", callback_data="status"),
-                InlineKeyboardButton("❓ Help", callback_data="help"),
+                InlineKeyboardButton("⚙️ 状态", callback_data="status"),
+                InlineKeyboardButton("❓ 帮助", callback_data="help"),
             ],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
         welcome_text = f"""
-🤖 **Welcome to Kubera Trading Bot!**
+🤖 **欢迎使用 Kubera 股票助手！**
 
-Hi {user.first_name}! I'm your AI-powered trading assistant.
+你好 {user.first_name}，我是你的 AI 投研助手。
 
-**What I can do:**
-• 📊 Track your portfolio & watchlist
-• 🔍 Run deep AI analysis on stocks
-• 🚀 Discover trending stocks from YouTube/X/News
-• 📈 Provide investment recommendations
+**我能做什么：**
+• 📊 跟踪你的持仓与自选
+• 🔍 对股票进行深度 AI 分析
+• 🚀 从 YouTube/X/新闻发现热门股票
+• 📈 提供投资建议与目标价
 
-**Quick Start:**
-Use the buttons below or type:
-• /portfolio - View your holdings
-• /analyze_portfolio - Analyze portfolio stocks
-• /discover - Find trending stocks
-• /help - Show all commands
+**快速开始：**
+可点击下方按钮或输入命令：
+• /portfolio - 查看当前持仓
+• /analyze_portfolio - 分析持仓股票
+• /discover - 发现热门股票
+• /help - 查看所有命令
 
-Let's get started! 🚀
+一起开始吧！🚀
         """
         
         await update.message.reply_text(
@@ -156,38 +156,33 @@ Let's get started! 🚀
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /help command"""
         help_text = """
-📚 **Kubera Bot Commands**
+📚 **Kubera 机器人命令**
 
-**Portfolio & Watchlist:**
-• `/portfolio` - View current holdings with P&L
-• `/watchlist` - View stocks on watchlist
+**持仓与自选：**
+• `/portfolio` - 查看持仓与盈亏
+• `/watchlist` - 查看自选列表
 
-**Analysis:**
-• `/analyze_portfolio` - Analyze portfolio stocks (Priority 1)
-• `/analyze_watchlist` - Analyze watchlist stocks (Priority 2)
-• `/discover` - Discover & analyze trending stocks (Priority 3)
-• `/analyze` - Full analysis (all priorities)
+**分析：**
+• `/analyze_portfolio` - 分析持仓股票（优先级 1）
+• `/analyze_watchlist` - 分析自选股票（优先级 2）
+• `/discover` - 发现并分析热门股票（优先级 3）
+• `/analyze` - 全量分析（所有优先级）
 
-**System:**
-• `/status` - Check system status
-• `/help` - Show this help message
+**系统：**
+• `/status` - 查看系统状态
+• `/help` - 显示本帮助
 
-**Analysis Priority:**
-1️⃣ **Portfolio** - Your current holdings (9 stocks)
-2️⃣ **Watchlist** - Future candidates (15 stocks)
-3️⃣ **Discovered** - Trending from YouTube/X/News
+**分析流程：**
+共两阶段 AI 分析：
+- 阶段 1：四位分析师（行情、新闻、情绪、基本面）
+- 阶段 2：多轮辩论（多头 vs 空头，裁判定论）
 
-**How it works:**
-The bot runs a 2-stage AI analysis:
-- Stage 1: 4 analyst reports (Market, News, Sentiment, Fundamentals)
-- Stage 2: Investment debate (Bull vs Bear, Judge decision)
+输出包含：买入/持有/卖出建议、信心评分、目标价等。
 
-Results include: BUY/HOLD/SELL with conviction score & price targets.
-
-**Pro Tips:**
-• Start with `/analyze_portfolio` (analyzes only your holdings)
-• Full analysis takes 5-10 minutes per stock
-• Use `/discover` to find new opportunities
+**建议：**
+• 先运行 `/analyze_portfolio`（仅分析持仓，更快）
+• 单支股票完整分析约需 5–10 分钟
+• 用 `/discover` 发现新的机会
         """
         
         await update.message.reply_text(help_text, parse_mode='Markdown')
@@ -206,10 +201,10 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             portfolio = portfolio_data.get('portfolio', {}).get('stocks', [])
             
             if not portfolio:
-                await update.message.reply_text("📊 Your portfolio is empty.")
+                await update.message.reply_text("📊 你的持仓为空。")
                 return
             
-            message = "📊 **Your Portfolio**\n\n"
+            message = "📊 **当前持仓**\n\n"
             total_equity = 0
             total_pl = 0
             
@@ -227,24 +222,24 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
                 
                 emoji = "🟢" if pl >= 0 else "🔴"
                 message += f"{emoji} **{symbol}**\n"
-                message += f"  Shares: {shares:.2f}\n"
-                message += f"  Avg Cost: ${avg_cost:.2f}\n"
-                message += f"  Current: ${current_price:.2f}\n"
-                message += f"  Equity: ${equity:.2f}\n"
-                message += f"  P&L: ${pl:.2f} ({pl_pct:+.2f}%)\n\n"
+                message += f"  持股数: {shares:.2f}\n"
+                message += f"  平均成本: ${avg_cost:.2f}\n"
+                message += f"  当前价格: ${current_price:.2f}\n"
+                message += f"  市值: ${equity:.2f}\n"
+                message += f"  未实现盈亏: ${pl:.2f} ({pl_pct:+.2f}%)\n\n"
             
             total_pl_pct = (total_pl / (total_equity - total_pl)) * 100 if (total_equity - total_pl) > 0 else 0
             emoji = "🟢" if total_pl >= 0 else "🔴"
             
-            message += f"**Total**\n"
-            message += f"  Equity: ${total_equity:.2f}\n"
-            message += f"  P&L: {emoji} ${total_pl:.2f} ({total_pl_pct:+.2f}%)"
+            message += f"**合计**\n"
+            message += f"  总市值: ${total_equity:.2f}\n"
+            message += f"  总盈亏: {emoji} ${total_pl:.2f} ({total_pl_pct:+.2f}%)"
             
             await update.message.reply_text(message, parse_mode='Markdown')
             
         except Exception as e:
             logger.error(f"Error in portfolio_command: {e}")
-            await update.message.reply_text(f"❌ Error loading portfolio: {str(e)}")
+            await update.message.reply_text(f"❌ 加载持仓失败：{str(e)}")
     
     async def watchlist_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /watchlist command"""
@@ -252,10 +247,10 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             watchlist = self.pipeline.portfolio_config.get('watchlist', {}).get('stocks', [])
             
             if not watchlist:
-                await update.message.reply_text("👀 Your watchlist is empty.")
+                await update.message.reply_text("👀 你的自选列表为空。")
                 return
             
-            message = "👀 **Your Watchlist**\n\n"
+            message = "👀 **自选列表**\n\n"
             
             for i, symbol in enumerate(watchlist, 1):
                 # Get current price
@@ -268,24 +263,24 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
                 except:
                     message += f"{i}. **{symbol}**\n"
             
-            message += f"\n**Total:** {len(watchlist)} stocks"
+            message += f"\n**合计：** {len(watchlist)} 支股票"
             
             await update.message.reply_text(message, parse_mode='Markdown')
             
         except Exception as e:
             logger.error(f"Error in watchlist_command: {e}")
-            await update.message.reply_text(f"❌ Error loading watchlist: {str(e)}")
+            await update.message.reply_text(f"❌ 加载自选失败：{str(e)}")
     
     async def analyze_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /analyze command - Full analysis"""
         await update.message.reply_text(
-            "🚀 **Starting Full Analysis**\n\n"
-            "This will analyze:\n"
-            "1️⃣ Portfolio holdings (9 stocks)\n"
-            "2️⃣ Watchlist stocks (15 stocks)\n"
-            "3️⃣ Discovered trending stocks\n\n"
-            "⏱️ This may take 20-30 minutes...\n"
-            "I'll send updates as I progress."
+            "🚀 **开始全量分析**\n\n"
+            "将分析：\n"
+            "1️⃣ 持仓股票\n"
+            "2️⃣ 自选股票\n"
+            "3️⃣ 发现的热门股票\n\n"
+            "⏱️ 预计耗时 20–30 分钟\n"
+            "分析进度将逐步发送。"
         )
         
         try:
@@ -298,11 +293,11 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             )
             
             # Send results
-            await self._send_recommendations(update, recommendations, "Full Analysis")
+            await self._send_recommendations(update, recommendations, "全量分析")
             
         except Exception as e:
             logger.error(f"Error in analyze_command: {e}")
-            await update.message.reply_text(f"❌ Analysis failed: {str(e)}")
+            await update.message.reply_text(f"❌ 分析失败：{str(e)}")
     
     async def analyze_portfolio_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /analyze_portfolio command - NEW MULTI-AGENT WORKFLOW"""
@@ -320,17 +315,17 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             portfolio_count = len(portfolio_data.get('portfolio', {}).get('stocks', []))
             
             await update.message.reply_text(
-                f"🤖 **NEW: Multi-Agent Portfolio Analysis**\n\n"
-                f"📊 Analyzing {portfolio_count} stocks\n"
-                f"⏱️ Estimated time: ~{portfolio_count * 25} seconds\n\n"
-                f"🔬 Running 8 specialized AI agents...\n"
-                f"• Portfolio Loader\n"
-                f"• Historical Data\n"
-                f"• News Fetcher\n"
-                f"• Company Fundamentals\n"
-                f"• Risk Manager\n"
-                f"• Deep Researcher\n\n"
-                f"Please wait..."
+                f"🤖 **全新：多智能体持仓分析**\n\n"
+                f"📊 分析股票数：{portfolio_count}\n"
+                f"⏱️ 预计耗时：~{portfolio_count * 25} 秒\n\n"
+                f"🔬 运行 8 个专用 AI 智能体：\n"
+                f"• 组合加载\n"
+                f"• 历史与实时行情\n"
+                f"• 新闻与事件\n"
+                f"• 公司基本面\n"
+                f"• 风险管理\n"
+                f"• 深度研究\n\n"
+                f"请稍候..."
             )
             
             # Run new workflow
@@ -338,7 +333,7 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             result_state = await asyncio.to_thread(workflow.run)
             
             if result_state.get("workflow_error"):
-                await update.message.reply_text(f"❌ Analysis failed: {result_state['workflow_error']}")
+                await update.message.reply_text(f"❌ 分析失败：{result_state['workflow_error']}")
                 return
             
             # Format results for Telegram
@@ -346,7 +341,7 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             
         except Exception as e:
             logger.error(f"Error in analyze_portfolio_command: {e}")
-            await update.message.reply_text(f"❌ Analysis failed: {str(e)}")
+            await update.message.reply_text(f"❌ 分析失败：{str(e)}")
     
     async def _send_new_portfolio_results(self, update: Update, state: Dict[str, Any]) -> None:
         """Send formatted results from new workflow"""
@@ -355,21 +350,21 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
         research = state.get("research_results", {})
         
         # Portfolio Overview
-        message = f"""🤖 **KUBERA PORTFOLIO ANALYSIS**
+        message = f"""🤖 **KUBERA 组合分析**
 ━━━━━━━━━━━━━━━━━━━━━━
 
-📊 **Portfolio Overview**
-• Stocks: {summary.get('total_stocks', 0)}
-• Total Value: ${summary.get('total_equity', 0):,.2f}
-• Total P&L: ${summary.get('unrealized_pl', 0):,.2f}
+📊 **组合概览**
+• 股票数量：{summary.get('total_stocks', 0)}
+• 总市值：${summary.get('total_equity', 0):,.2f}
+• 未实现盈亏：${summary.get('unrealized_pl', 0):,.2f}
 
-⚠️ **Risk Assessment**
-• Risk Level: {risk.get('portfolio_risk_level', 'Unknown')}
-• Risk Score: {risk.get('portfolio_risk_score', 'N/A')}/10
-• Diversification: {risk.get('diversification_grade', 'N/A')}
+⚠️ **风险评估**
+• 风险等级：{risk.get('portfolio_risk_level', '未知')}
+• 风险评分：{risk.get('portfolio_risk_score', 'N/A')}/10
+• 分散度：{risk.get('diversification_grade', 'N/A')}
 
 ━━━━━━━━━━━━━━━━━━━━━━
-🔬 **RECOMMENDATIONS**
+🔬 **投资建议**
 """
         
         # Send overview
@@ -394,13 +389,13 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             stock_msg = f"""
 {emoji} **{symbol}** - {decision}
 
-**Conviction:** {conviction}/10
+**信心：** {conviction}/10
 """
             if target_price > 0:
-                stock_msg += f"**Target Price:** ${target_price:.2f}\n"
+                stock_msg += f"**目标价：** ${target_price:.2f}\n"
             
             # Split rationale into chunks if too long (Telegram limit is 4096 chars per message)
-            stock_msg += f"\n**Detailed Analysis:**\n{rationale}\n"
+            stock_msg += f"\n**详细分析：**\n{rationale}\n"
             stock_msg += "─" * 30
             
             # Send stock message, splitting if too long
@@ -408,10 +403,10 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
                 if len(stock_msg) > 4000:
                     # Split into multiple messages
                     parts = []
-                    current_part = f"\n{emoji} **{symbol}** - {decision}\n\n**Conviction:** {conviction}/10\n"
+                    current_part = f"\n{emoji} **{symbol}** - {decision}\n\n**信心：** {conviction}/10\n"
                     if target_price > 0:
-                        current_part += f"**Target Price:** ${target_price:.2f}\n"
-                    current_part += f"\n**Detailed Analysis (Part 1):**\n"
+                        current_part += f"**目标价：** ${target_price:.2f}\n"
+                    current_part += f"\n**详细分析（第 1 部分）：**\n"
                     parts.append(current_part)
                     
                     # Split rationale into chunks
@@ -425,7 +420,7 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
                         if part_num == 1:
                             parts[0] += chunk
                         else:
-                            parts.append(f"**{symbol} Analysis (Part {part_num + 1}):**\n{chunk}")
+                            parts.append(f"**{symbol} 详细分析（第 {part_num + 1} 部分）：**\n{chunk}")
                         part_num += 1
                     
                     # Send each part
@@ -450,10 +445,10 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
         duration = state.get("workflow_duration", 0)
         evaluation = state.get("agent_evaluation", {})
         
-        final_msg = f"""✅ **Analysis Complete**
+        final_msg = f"""✅ **分析完成**
 
-⏱️ Duration: {duration:.1f}s
-💡 This is not financial advice. Always do your own research."""
+⏱️ 耗时：{duration:.1f}s
+💡 免责声明：非投资建议，请自行研究。"""
         
         # Add agent performance summary if available
         if evaluation:
@@ -467,7 +462,7 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             else:
                 performance_emoji = "⚠️"
             
-            final_msg += f"\n\n{performance_emoji} **Agent Performance: {overall_pct:.0f}%** ({status})"
+            final_msg += f"\n\n{performance_emoji} **智能体表现：{overall_pct:.0f}%**（{status}）"
         
         await update.message.reply_text(final_msg)
 
@@ -478,10 +473,10 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
         watchlist_count = len(self.pipeline.portfolio_config.get('watchlist', {}).get('stocks', []))
         
         await update.message.reply_text(
-            f"🔍 **Analyzing Watchlist**\n\n"
-            f"Stocks to analyze: {watchlist_count}\n"
-            f"⏱️ Estimated time: {watchlist_count * 2}-{watchlist_count * 3} minutes\n\n"
-            f"Running deep AI analysis..."
+            f"🔍 **分析自选列表**\n\n"
+            f"待分析股票数：{watchlist_count}\n"
+            f"⏱️ 预计耗时：{watchlist_count * 2}-{watchlist_count * 3} 分钟\n\n"
+            f"正在进行深度 AI 分析..."
         )
         
         try:
@@ -492,21 +487,21 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
                 analyze_discovered=False
             )
             
-            await self._send_recommendations(update, recommendations, "Watchlist Analysis")
+            await self._send_recommendations(update, recommendations, "自选分析")
             
         except Exception as e:
             logger.error(f"Error in analyze_watchlist_command: {e}")
-            await update.message.reply_text(f"❌ Analysis failed: {str(e)}")
+            await update.message.reply_text(f"❌ 分析失败：{str(e)}")
     
     async def discover_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /discover command"""
         await update.message.reply_text(
-            "🚀 **Discovering Trending Stocks**\n\n"
-            "Scanning:\n"
-            "• 📺 YouTube finance videos\n"
-            "• 🐦 X/Twitter discussions\n"
-            "• 📰 Financial news\n\n"
-            "⏱️ This may take 10-15 minutes..."
+            "🚀 **发现热门股票**\n\n"
+            "扫描来源：\n"
+            "• 📺 YouTube 财经视频\n"
+            "• 🐦 X/Twitter 讨论\n"
+            "• 📰 财经新闻\n\n"
+            "⏱️ 预计耗时 10–15 分钟"
         )
         
         try:
@@ -518,11 +513,11 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
                 top_n_discovered=5
             )
             
-            await self._send_recommendations(update, recommendations, "Stock Discovery")
+            await self._send_recommendations(update, recommendations, "热门股票发现")
             
         except Exception as e:
             logger.error(f"Error in discover_command: {e}")
-            await update.message.reply_text(f"❌ Discovery failed: {str(e)}")
+            await update.message.reply_text(f"❌ 发现失败：{str(e)}")
     
     async def status_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /status command"""
@@ -531,32 +526,32 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             watchlist_count = len(self.pipeline.portfolio_config.get('watchlist', {}).get('stocks', []))
             
             status_text = f"""
-⚙️ **System Status**
+⚙️ **系统状态**
 
-✅ **Online**
+✅ **在线**
 
-**Portfolio:**
-• Holdings: {portfolio_count} stocks
-• Watchlist: {watchlist_count} stocks
+**组合：**
+• 持仓：{portfolio_count} 支股票
+• 自选：{watchlist_count} 支股票
 
-**AI Models:**
-• Stage 1 Analysts: 4 models
-• Stage 2 Debate: 3 models
-• Discovery: 2 models
+**AI 模型：**
+• 阶段 1 分析师：4 个模型
+• 阶段 2 辩论：3 个模型
+• 发现：2 个模型
 
-**Data Sources:**
-• Market Data: yfinance + Alpha Vantage
-• News: Alpha Vantage API
-• Discovery: YouTube + X/Twitter
+**数据来源：**
+• 行情：yfinance + Alpha Vantage
+• 新闻：Alpha Vantage API
+• 发现：YouTube + X/Twitter
 
-**Last Updated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+**最近更新：** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
             """
             
             await update.message.reply_text(status_text, parse_mode='Markdown')
             
         except Exception as e:
             logger.error(f"Error in status_command: {e}")
-            await update.message.reply_text(f"❌ Error: {str(e)}")
+            await update.message.reply_text(f"❌ 错误：{str(e)}")
     
     async def button_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle button clicks"""
@@ -592,11 +587,11 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
     ) -> None:
         """Send formatted recommendations"""
         if not recommendations:
-            await update.message.reply_text(f"✅ **{title} Complete**\n\nNo recommendations to display.")
+            await update.message.reply_text(f"✅ **{title} 完成**\n\n暂无推荐结果。")
             return
         
-        message = f"✅ **{title} Complete**\n\n"
-        message += f"**Top Recommendations:**\n\n"
+        message = f"✅ **{title} 完成**\n\n"
+        message += f"**优选推荐：**\n\n"
         
         for i, rec in enumerate(recommendations[:10], 1):  # Top 10
             symbol = rec['symbol']
@@ -609,9 +604,9 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
             emoji = emoji_map.get(decision, "⚪")
             
             message += f"{i}. {emoji} **{symbol}** - {decision}\n"
-            message += f"   Priority: {priority_label}\n"
-            message += f"   Conviction: {conviction}/10\n"
-            message += f"   Target: ${target:.2f}\n\n"
+            message += f"   优先级：{priority_label}\n"
+            message += f"   信心：{conviction}/10\n"
+            message += f"   目标价：${target:.2f}\n\n"
         
         await update.message.reply_text(message, parse_mode='Markdown')
     
@@ -621,7 +616,7 @@ Results include: BUY/HOLD/SELL with conviction score & price targets.
         
         if isinstance(update, Update) and update.effective_message:
             await update.effective_message.reply_text(
-                "❌ An error occurred. Please try again later."
+                "❌ 发生错误，请稍后重试。"
             )
     
     def run(self) -> None:
