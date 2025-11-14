@@ -64,8 +64,9 @@ class BaseAgent:
         if not api_key:
             raise ValueError("OPENROUTER_API_KEY not found in environment variables")
 
+        base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
         self.client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
+            base_url=base_url,
             api_key=api_key
         )
 

@@ -9,6 +9,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 
 from langchain_openai import ChatOpenAI
+import os
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 
@@ -75,10 +76,10 @@ class DeepThinkingResearcher:
         # Initialize LLM for deep reasoning
         self.llm = ChatOpenAI(
             model=model,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
             openai_api_key=openrouter_api_key,
-            temperature=0.3,  # Moderate temperature for balanced reasoning
-            max_tokens=4000  # Allow for detailed analysis
+            temperature=0.3,
+            max_tokens=4000
         )
         
         logger.info(f"Deep Thinking Researcher initialized with model: {model}")

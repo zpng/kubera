@@ -9,6 +9,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 
 from langchain_openai import ChatOpenAI
+import os
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
@@ -159,9 +160,9 @@ class CompanyInfoAgent:
         # Initialize LLM for fundamental analysis
         self.llm = ChatOpenAI(
             model=model,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
             openai_api_key=openrouter_api_key,
-            temperature=0.2  # Low temperature for analytical precision
+            temperature=0.2
         )
         
         # Bind tools

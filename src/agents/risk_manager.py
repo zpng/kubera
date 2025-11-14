@@ -9,6 +9,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 
 from langchain_openai import ChatOpenAI
+import os
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 
@@ -67,9 +68,9 @@ class RiskManagerAgent:
         # Initialize LLM for risk analysis
         self.llm = ChatOpenAI(
             model=model,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
             openai_api_key=openrouter_api_key,
-            temperature=0.1  # Very low temperature for risk analysis precision
+            temperature=0.1
         )
         
         logger.info(f"Risk Manager Agent initialized with model: {model}")

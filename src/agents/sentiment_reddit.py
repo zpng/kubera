@@ -111,9 +111,10 @@ class RedditSentimentAgent:
         self.model = model
         
         # Initialize LLM for sentiment analysis
+        import os
         self.llm = ChatOpenAI(
             model=model,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
             openai_api_key=openrouter_api_key,
             temperature=0.3
         )

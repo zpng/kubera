@@ -11,6 +11,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 
 from langchain_openai import ChatOpenAI
+import os
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
@@ -60,9 +61,9 @@ class PortfolioLoaderAgent:
         # Initialize LLM for validation and enrichment
         self.llm = ChatOpenAI(
             model=model,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
             openai_api_key=openrouter_api_key,
-            temperature=0.1  # Low temperature for consistent data processing
+            temperature=0.1
         )
         
         # Set up JSON output parser

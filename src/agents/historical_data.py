@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import yfinance as yf
 import pandas as pd
 from langchain_openai import ChatOpenAI
+import os
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
@@ -144,9 +145,9 @@ class HistoricalDataAgent:
         # Initialize LLM for data analysis
         self.llm = ChatOpenAI(
             model=model,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
             openai_api_key=openrouter_api_key,
-            temperature=0.2  # Low temperature for analytical consistency
+            temperature=0.2
         )
         
         # Bind tools to LLM

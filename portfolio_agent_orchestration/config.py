@@ -75,3 +75,4 @@ WORKFLOW_CONFIG = {
     "retry_failed_agents": True,
     "max_retries": 3,
 }
+
