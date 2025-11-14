@@ -24,7 +24,7 @@ ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # OpenRouter Configuration
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
 
 # Model Selection for Each Agent
 # Note: deep_researcher has automatic fallback to deepseek/deepseek-chat-v3.1 if primary model fails
@@ -75,4 +75,3 @@ WORKFLOW_CONFIG = {
     "retry_failed_agents": True,
     "max_retries": 3,
 }
-
