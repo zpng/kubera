@@ -26,6 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY src/ ./src/
+COPY portfolio_agent_orchestration/ ./portfolio_agent_orchestration/
 COPY config/ ./config/
 COPY examples/ ./examples/
 
@@ -33,7 +34,7 @@ COPY examples/ ./examples/
 RUN mkdir -p ./data/cache
 
 # Set environment variables
-ENV PYTHONPATH=/app/src
+ENV PYTHONPATH=/app/src:/app
 ENV PYTHONUNBUFFERED=1
 
 # Expose port for Railway
