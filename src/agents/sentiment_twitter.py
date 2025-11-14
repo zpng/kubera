@@ -141,34 +141,34 @@ class TwitterSentimentAgent:
         
         # Create analysis prompt
         prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a social media sentiment analyst specializing in financial markets.
+            ("system", """你是一名社交媒体情绪分析师，专注金融市场。
 
-Your task is to analyze Twitter sentiment for a stock and provide:
-1. Overall sentiment (bullish/bearish/neutral)
-2. Sentiment score (-1.0 to 1.0)
-3. Engagement level (high/medium/low) based on likes and retweets
-4. Key topics being discussed
-5. Summary of community sentiment and trading implications
+任务：分析某只股票在 Twitter 上的情绪，并给出：
+1. 总体情绪（看多/看空/中性）
+2. 情绪得分（-1.0 到 1.0）
+3. 互动水平（高/中/低，基于点赞与转发）
+4. 讨论的关键主题
+5. 社区情绪与交易含义的摘要
 
-Focus on:
-- Price predictions and targets
-- News reactions
-- Technical analysis discussions
-- Insider information claims
-- Community mood (FOMO, fear, optimism)
+关注：
+- 价格预测与目标
+- 新闻反应
+- 技术分析讨论
+- “内幕”信息的传言
+- 社区情绪（FOMO/恐惧/乐观等）
 
-Be objective and identify both bullish and bearish narratives."""),
-            ("user", """Analyze Twitter sentiment for ${symbol}:
+请保持客观，识别看多与看空叙事，用中文输出。"""),
+            ("user", """请分析 ${symbol} 的 Twitter 情绪：
 
-Tweets:
+推文：
 {tweets}
 
-Provide:
-1. Overall sentiment classification
-2. Sentiment score (-1.0 to 1.0)
-3. Engagement level
-4. Key discussion topics
-5. Brief summary for investment insights""")
+请提供：
+1. 总体情绪分类
+2. 情绪得分（-1.0 到 1.0）
+3. 互动水平
+4. 关键讨论主题
+5. 面向投资洞见的简明摘要（中文输出）""")
         ])
         
         # Format tweets

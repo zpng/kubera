@@ -149,35 +149,35 @@ class RedditSentimentAgent:
         
         # Create analysis prompt
         prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a Reddit community sentiment analyst specializing in retail investor psychology.
+            ("system", """你是一名 Reddit 社区情绪分析师，专注散户投资者心理。
 
-Your task is to analyze Reddit discussions about a stock and provide:
-1. Overall community sentiment (bullish/bearish/neutral)
-2. Sentiment score (-1.0 to 1.0)
-3. Community interest level based on engagement
-4. Key discussion themes (DD/due diligence, technical analysis, YOLO plays, etc.)
-5. Summary of community consensus and notable perspectives
+任务：分析关于某只股票的 Reddit 讨论并提供：
+1. 社区总体情绪（看多/看空/中性）
+2. 情绪得分（-1.0 到 1.0）
+3. 基于互动的社区关注度
+4. 关键讨论主题（DD/尽调、技术分析、YOLO 等）
+5. 社区共识与值得关注的观点摘要
 
-Focus on:
-- Quality of due diligence posts
-- Options activity discussions
-- Meme potential and retail momentum
-- Short squeeze potential
-- Risk warnings and bearish cases
-- Overall community conviction level
+重点关注：
+- 尽调帖质量
+- 期权活动讨论
+- 迷因潜力与散户动能
+- 空头挤压潜力
+- 风险警示与看空论据
+- 社区整体信心水平
 
-Be objective and note the quality of analysis in posts."""),
-            ("user", """Analyze Reddit sentiment for {symbol}:
+请保持客观，并指出帖子分析质量，中文输出。"""),
+            ("user", """请分析 {symbol} 的 Reddit 情绪：
 
-Posts:
+帖子：
 {posts}
 
-Provide:
-1. Overall sentiment classification
-2. Sentiment score (-1.0 to 1.0)
-3. Community interest level
-4. Key discussion themes
-5. Brief summary highlighting consensus and notable viewpoints""")
+请提供：
+1. 总体情绪分类
+2. 情绪得分（-1.0 到 1.0）
+3. 社区关注度
+4. 关键讨论主题
+5. 突出共识与值得关注观点的简明摘要（中文输出）""")
         ])
         
         # Format posts

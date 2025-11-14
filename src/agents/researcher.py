@@ -122,6 +122,8 @@ class DeepThinkingResearcher:
 
 Your task is to synthesize ALL available data sources and provide a COMPREHENSIVE, DETAILED investment recommendation.
 
+Language Requirement: All narrative content MUST be written in Chinese, while keeping the specified section headers and fixed keys in English (DECISION, CONVICTION, TARGET PRICE, STOP LOSS, TIME HORIZON, BULL CASE, BEAR CASE, KEY CATALYSTS, KEY RISKS, FACTOR SCORES, EXECUTIVE SUMMARY, DETAILED ANALYSIS, ACTION PLAN).
+
 **CRITICAL REQUIREMENTS:**
 1. Make a clear BUY/HOLD/SELL decision with conviction level (1-10)
 2. Provide detailed reasoning including bull case, bear case, catalysts, and risks

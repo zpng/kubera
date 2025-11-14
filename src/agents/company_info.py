@@ -212,53 +212,53 @@ class CompanyInfoAgent:
         
         # Create analysis prompt
         prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a fundamental analyst specializing in company valuation and financial analysis.
+            ("system", """你是一名基本面分析师，专注公司估值与财务分析。
 
-Your task is to analyze a company's fundamentals and provide:
-1. Valuation assessment (overvalued/fairly valued/undervalued)
-2. Financial health analysis (strong/moderate/weak)
-3. Growth prospects evaluation
-4. Key strengths and concerns
-5. Investment thesis summary
+任务：分析公司的基本面并提供：
+1. 估值评估（高估/合理/低估）
+2. 财务健康分析（强/中/弱）
+3. 增长前景评估
+4. 关键优势与关注点
+5. 投资论点摘要
 
-Focus on:
-- Price multiples (P/E, P/B, P/S ratios)
-- Profitability metrics (margins, ROE, ROA)
-- Financial leverage (debt ratios)
-- Liquidity (current ratio, quick ratio)
-- Growth rates (revenue, earnings)
-- Industry comparisons
+重点关注：
+- 价格倍数（P/E、P/B、P/S）
+- 盈利能力指标（利润率、ROE、ROA）
+- 财务杠杆（负债比率）
+- 流动性（流动比率、速动比率）
+- 增长率（营收、利润）
+- 行业对比
 
-Provide a concise yet comprehensive analysis suitable for investment decision-making."""),
-            ("user", """Analyze the following company data for {symbol}:
+请以简明但全面的中文分析，适用于投资决策。"""),
+            ("user", """请分析 {symbol} 的如下公司数据：
 
-Company Information:
-- Name: {company_name}
-- Sector: {sector}
-- Industry: {industry}
+公司信息：
+- 名称：{company_name}
+- 行业：{industry}
+- 赛道/板块：{sector}
 
-Financial Metrics:
-- Market Cap: ${market_cap}
-- P/E Ratio: {pe_ratio}
-- Forward P/E: {forward_pe}
-- PEG Ratio: {peg_ratio}
-- Price/Book: {price_to_book}
-- Price/Sales: {price_to_sales}
-- Profit Margin: {profit_margin}%
-- Operating Margin: {operating_margin}%
-- ROE: {roe}%
-- ROA: {roa}%
-- Debt/Equity: {debt_to_equity}
-- Current Ratio: {current_ratio}
+财务指标：
+- 市值：${market_cap}
+- P/E：{pe_ratio}
+- Forward P/E：{forward_pe}
+- PEG：{peg_ratio}
+- P/B：{price_to_book}
+- P/S：{price_to_sales}
+- 净利率：{profit_margin}%
+- 营业利润率：{operating_margin}%
+- ROE：{roe}%
+- ROA：{roa}%
+- 资产负债率（D/E）：{debt_to_equity}
+- 流动比率：{current_ratio}
 
-Growth Metrics:
-- Revenue Growth: {revenue_growth}%
-- Earnings Growth: {earnings_growth}%
+增长指标：
+- 收入增长：{revenue_growth}%
+- 盈利增长：{earnings_growth}%
 
-Analyst Recommendation: {analyst_rec}
-Target Price: ${target_price}
+分析师建议：{analyst_rec}
+目标价：${target_price}
 
-Provide a valuation summary and investment thesis.""")
+请输出估值总结与投资论点（中文）。""")
         ])
         
         # Format data

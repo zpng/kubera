@@ -197,35 +197,35 @@ class NewsFetcherAgent:
         
         # Create comprehensive prompt
         prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a financial news analyst specializing in extracting actionable insights from news and events.
+            ("system", """你是一名金融新闻分析师，擅长从新闻与事件中提炼可操作的洞见。
 
-Your task is to analyze news articles and company events for a stock and provide:
-1. Overall sentiment (bullish/bearish/neutral) based on news
-2. Key events (earnings, contracts, regulatory changes, product launches)
-3. A concise summary highlighting the most important information for investors
-4. Impact assessment (high/medium/low) for each event
+任务：分析某只股票的新闻与公司事件，并提供：
+1. 总体情绪（看多/看空/中性）
+2. 关键事件（财报、合同、监管变化、产品发布等）
+3. 面向投资者的简明摘要，突出最重要信息
+4. 每个事件的影响评估（高/中/低）
 
-Focus on:
-- Quarterly earnings and financial results
-- Government contracts and major deals
-- Product launches and innovations
-- Regulatory changes
-- Management changes
-- Market trends affecting the company
+重点关注：
+- 季度财报与财务结果
+- 政府合同与重大交易
+- 产品发布与创新
+- 监管变化
+- 管理层变动
+- 影响公司的市场趋势
 
-Return your analysis in a clear, structured format."""),
-            ("user", """Analyze the following news data for {symbol}:
+请以清晰、结构化的中文输出分析。"""),
+            ("user", """请分析 {symbol} 的以下新闻数据：
 
-News Articles:
+新闻文章：
 {articles}
 
-Earnings Information:
+财报/事件信息：
 {earnings_info}
 
-Provide a comprehensive analysis with:
-1. Overall sentiment
-2. Key events with impact assessment
-3. A concise summary for investment decision-making""")
+请给出全面分析，包含：
+1. 总体情绪
+2. 关键事件及影响评估
+3. 供投资决策参考的简明摘要（中文输出）""")
         ])
         
         # Format articles for analysis

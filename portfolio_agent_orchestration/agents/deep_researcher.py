@@ -598,6 +598,8 @@ Target price of ${target_price} represents {((target_price/actual_current_price 
         # Strict system message to prevent hallucinations
         system_msg = SystemMessage(content="""You are a senior investment analyst with expertise in equity research.
 
+Language Requirement: All narrative analysis MUST be written in Chinese. Keep the required English labels (e.g., **DECISION**, **CONVICTION**, **TARGET PRICE**) exactly as specified.
+
 ╔═══════════════════════════════════════════════════════════════╗
 ║  ⚠️  ABSOLUTE PROHIBITION - VIOLATING THIS WILL FAIL YOU  ⚠️   ║
 ║                                                               ║
@@ -621,7 +623,7 @@ Target price of ${target_price} represents {((target_price/actual_current_price 
 YOUR TASK: Write interpretation and analysis following the template format.
 
 ABSOLUTELY CRITICAL FORMAT REQUIREMENTS:
-1. START your response with EXACTLY these three lines (with ** bold markers):
+1. START your response with EXACTLY these three lines (with ** bold markers, labels in English, narrative in Chinese):
    **DECISION**: [your decision here]
    **CONVICTION**: [number 1-10 only]
    **TARGET PRICE**: $[exact number]

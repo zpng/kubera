@@ -54,29 +54,33 @@ class BullResearcher(BaseAgent):
             reports_summary = self._format_analyst_reports(analyst_reports)
 
             # Create user prompt
-            user_prompt = f"""Based on the analyst reports below, build the strongest possible BULL CASE for buying {symbol}.
+            user_prompt = f"""请基于下方分析师报告，为 {symbol} 构建最有力的看多论点（BULL CASE）。
 
-Current Price: ${current_price:.2f}
+当前价格：${current_price:.2f}
 
-ANALYST REPORTS:
+分析师报告：
 {reports_summary}
 
-Your task:
-1. Identify the 3-5 strongest bullish points from the analyst reports
-2. Build compelling arguments for why the stock will go UP
-3. Highlight growth catalysts and opportunities
-4. Address potential bear arguments proactively
-5. Provide a conviction rating (1-10, where 10 = extremely bullish)
-6. Provide a 6-12 month price target with reasoning
+任务：
+1. 从报告中提炼 3-5 个最强的看多要点
+2. 构建有说服力的上行论证
+3. 强调增长催化与机会
+4. 主动回应潜在看空观点
+5. 给出信心评级（1-10）
+6. 给出 6-12 个月目标价并说明理由
 
-Focus on:
-- Growth potential and catalysts
-- Positive technical momentum
-- Strong fundamentals and competitive advantages
-- Bullish news and sentiment
-- Market opportunities and tailwinds
+重点关注：
+- 增长潜力与催化剂
+- 积极的技术动能
+- 扎实的基本面与竞争优势
+- 正面的新闻与情绪
+- 市场机会与顺风
 
-Be constructive and optimistic, but cite specific evidence from the reports.
+输出要求：
+- 全文使用中文叙述
+- 必须在文中单独包含如下两行英文标签，便于系统解析：
+  Conviction: [1-10]
+  Price Target: $[目标价]
 """
 
             # Get bull thesis from LLM

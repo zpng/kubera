@@ -57,26 +57,31 @@ class ResearchJudge(BaseAgent):
             debate_summary = self._format_debate(bull_case, bear_case)
 
             # Create user prompt
-            user_prompt = f"""You are evaluating the investment case for {symbol} at ${current_price:.2f}.
+            user_prompt = f"""你正在评估 {symbol}（当前价格 ${current_price:.2f}）的投资论点。
 
-Below are the BULL and BEAR research arguments. Your task is to:
+以下为看多与看空研究摘要。请完成：
 
-1. Summarize the key points from BOTH sides objectively
-2. Evaluate the quality and strength of each argument
-3. Assess the risk/reward ratio
-4. Make a CLEAR final recommendation: BUY, HOLD, or SELL
-5. Provide conviction level (1-10)
-6. Explain your reasoning thoroughly
+1. 客观总结双方关键要点
+2. 评估论证质量与力度
+3. 评估风险/回报比
+4. 给出明确最终建议：BUY / HOLD / SELL
+5. 提供信心等级（1-10）
+6. 充分解释理由
 
 {debate_summary}
 
-Consider:
-- Which side has stronger evidence?
-- What is the risk/reward profile?
-- Are there any critical factors being overlooked?
-- What is the probability-weighted expected outcome?
+考虑：
+- 哪一方证据更强？
+- 风险/回报结构如何？
+- 是否有被忽略的关键因素？
+- 概率加权的预期结果？
 
-Provide a balanced, objective assessment and a CLEAR decision.
+输出要求：
+- 全文中文叙述
+- 为便于系统解析，必须在结论中包含如下三行英文标签：
+  Recommendation: BUY/HOLD/SELL
+  Conviction: [1-10]
+  Price Target: $[目标价]
 """
 
             # Get judgment from LLM
