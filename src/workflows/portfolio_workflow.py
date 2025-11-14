@@ -63,11 +63,11 @@ class PortfolioAnalysisWorkflow:
         logger.info("Initializing agents...")
         
         try:
-            # Agent 1: Portfolio Loader (deepseek/deepseek-chat-v3.1)
+            # Agent 1: Portfolio Loader (deepseek-v3.1)
             self.portfolio_loader = PortfolioLoaderAgent(
                 portfolio_path=self.portfolio_path,
                 openrouter_api_key=self.openrouter_api_key,
-                model="deepseek/deepseek-chat-v3.1"
+                model="deepseek-v3.1"
             )
             logger.info("✓ Portfolio Loader Agent initialized")
             
@@ -78,38 +78,38 @@ class PortfolioAnalysisWorkflow:
             )
             logger.info("✓ Historical Data Agent initialized")
             
-            # Agent 3: News Fetcher (google/gemini-2.0-flash-exp)
+            # Agent 3: News Fetcher (gemini-2.0-flash-exp)
             self.news_fetcher = NewsFetcherAgent(
                 openrouter_api_key=self.openrouter_api_key,
-                model="google/gemini-2.0-flash-exp"
+                model="gemini-2.0-flash-exp"
             )
             logger.info("✓ News Fetcher Agent initialized")
             
-            # Agent 4: Company Info (deepseek/deepseek-r1-distill-llama-70b)
+            # Agent 4: Company Info (deepseek-reasoner)
             self.company_info_agent = CompanyInfoAgent(
                 openrouter_api_key=self.openrouter_api_key,
-                model="deepseek/deepseek-r1-distill-llama-70b"
+                model="deepseek-reasoner"
             )
             logger.info("✓ Company Info Agent initialized")
             
-            # Agent 5: Twitter Sentiment (deepseek/deepseek-chat-v3.1)
+            # Agent 5: Twitter Sentiment (deepseek-v3.1)
             self.twitter_agent = TwitterSentimentAgent(
                 openrouter_api_key=self.openrouter_api_key,
-                model="deepseek/deepseek-chat-v3.1"
+                model="deepseek-v3.1"
             )
             logger.info("✓ Twitter Sentiment Agent initialized")
             
-            # Agent 6: Reddit Sentiment (deepseek/deepseek-chat-v3.1)
+            # Agent 6: Reddit Sentiment (deepseek-v3.1)
             self.reddit_agent = RedditSentimentAgent(
                 openrouter_api_key=self.openrouter_api_key,
-                model="deepseek/deepseek-chat-v3.1"
+                model="deepseek-v3.1"
             )
             logger.info("✓ Reddit Sentiment Agent initialized")
             
-            # Agent 7: Risk Manager (deepseek/deepseek-r1-0528)
+            # Agent 7: Risk Manager (deepseek-reasoner)
             self.risk_manager = RiskManagerAgent(
                 openrouter_api_key=self.openrouter_api_key,
-                model="deepseek/deepseek-r1-0528"
+                model="deepseek-reasoner"
             )
             logger.info("✓ Risk Manager Agent initialized")
             

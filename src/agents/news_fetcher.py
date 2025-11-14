@@ -1,7 +1,7 @@
 """
 News Fetcher Agent
 Gathers latest news, earnings, events, and predictions for portfolio stocks
-Model: google/gemini-2.0-flash-exp (multimodal, great for diverse data sources)
+Model: gemini-2.0-flash-exp (multimodal, great for diverse data sources)
 """
 
 import logging
@@ -125,20 +125,20 @@ def analyze_earnings_calendar(symbol: str) -> Dict[str, Any]:
 class NewsFetcherAgent:
     """
     Agent responsible for fetching and analyzing news and events
-    Uses: google/gemini-2.0-flash-exp for multimodal data integration
+    Uses: gemini-2.0-flash-exp for multimodal data integration
     """
     
     def __init__(
         self,
         openrouter_api_key: str = None,
-        model: str = "google/gemini-2.0-flash-exp"
+        model: str = "gemini-2.0-flash-exp"
     ):
         """
         Initialize News Fetcher Agent
         
         Args:
             openrouter_api_key: OpenRouter API key
-            model: Model to use (default: google/gemini-2.0-flash-exp)
+            model: Model to use (default: gemini-2.0-flash-exp)
         """
         self.model = model
         

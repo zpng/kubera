@@ -1,7 +1,7 @@
 """
 Reddit Sentiment Agent
 Collects and analyzes sentiment from Reddit (r/wallstreetbets, r/stocks, r/investing)
-Model: deepseek/deepseek-chat-v3.1 (efficient text analysis)
+Model: deepseek-v3.1 (efficient text analysis)
 """
 
 import logging
@@ -93,20 +93,20 @@ def fetch_reddit_data(symbol: str, subreddits: List[str] = None, limit: int = 20
 class RedditSentimentAgent:
     """
     Agent responsible for collecting and analyzing Reddit sentiment
-    Uses: deepseek/deepseek-chat-v3.1 for efficient community sentiment analysis
+    Uses: deepseek-v3.1 for efficient community sentiment analysis
     """
     
     def __init__(
         self,
         openrouter_api_key: str = None,
-        model: str = "deepseek/deepseek-chat-v3.1"
+        model: str = "deepseek-v3.1"
     ):
         """
         Initialize Reddit Sentiment Agent
         
         Args:
             openrouter_api_key: OpenRouter API key
-            model: Model to use (default: deepseek/deepseek-chat-v3.1)
+            model: Model to use (default: deepseek-v3.1)
         """
         self.model = model
         

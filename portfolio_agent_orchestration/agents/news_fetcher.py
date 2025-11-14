@@ -1,7 +1,7 @@
 """
 News Fetcher Agent
 Gathers latest news for portfolio stocks using Alpha Vantage and other sources
-Model: google/gemini-2.0-flash-exp (multimodal, good at integrating diverse data)
+Model: gemini-2.0-flash-exp (multimodal, good at integrating diverse data)
 """
 import logging
 from typing import Dict, Any, List

@@ -51,7 +51,7 @@ MODELS = {
     "claude": "anthropic/claude-sonnet-4.5",
     "gpt5": "openai/gpt-5",
     "gemini": "google/gemini-2.5-pro",
-    "deepseek": "deepseek/deepseek-chat-v3.1",
+    "deepseek": "deepseek-v3.1",
     "qwen": "qwen/qwen3-max"
 }
 

@@ -1,7 +1,7 @@
 """
 Risk Manager Agent
 Assesses portfolio risk, position sizing, and risk metrics
-Model: deepseek/deepseek-r1-0528 (large reasoning model for complex risk assessment)
+Model: deepseek-reasoner (large reasoning model for complex risk assessment)
 """
 import logging
 from typing import Dict, Any, List

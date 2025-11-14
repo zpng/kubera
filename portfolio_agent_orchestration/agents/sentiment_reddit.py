@@ -1,7 +1,7 @@
 """
 Reddit Sentiment Agent
 Collects and analyzes sentiment from Reddit (wallstreetbets, stocks, etc.)
-Model: nousresearch/hermes-3-llama-3.1-405b (strong at understanding community discussions)
+Model: deepseek-reasoner (strong at understanding community discussions)
 """
 import logging
 from typing import Dict, Any, List

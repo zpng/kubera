@@ -31,7 +31,7 @@ class BaseAgent:
         "gpt-5": "openai/gpt-5",  # GPT-5
         "gemini": "google/gemini-2.5-flash",  # Gemini 2.5 Flash (for YouTube)
         "grok": "x-ai/grok-3-mini",  # Grok 3 Mini (for X/Twitter)
-        "deepseek": "deepseek/deepseek-chat-v3.1:free",  # DeepSeek v3.1 (free)
+        "deepseek": "deepseek-v3.1:free",  # DeepSeek v3.1 (free)
         "qwen": "qwen/qwen3-235b-a22b:free"  # Qwen3 235B (free)
     }
 

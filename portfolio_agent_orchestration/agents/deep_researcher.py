@@ -1,7 +1,7 @@
 """
 Deep Researcher Agent
 Synthesizes all collected data and makes detailed BUY/HOLD/SELL decisions
-Model: deepseek/deepseek-r1-distill-llama-70b (reliable reasoning without hallucinations)
+Model: deepseek-reasoner (reliable reasoning without hallucinations)
 """
 import logging
 from typing import Dict, Any, List
@@ -19,19 +19,19 @@ class DeepResearcherAgent(BaseAgent):
     Agent responsible for deep research and final investment decisions
     Uses all data from previous agents to make comprehensive BUY/HOLD/SELL recommendations
 
-    Uses openrouter/polaris-alpha for advanced reasoning and complex analysis
+    Uses deepseek-reasoner for advanced reasoning and complex analysis
     """
 
     def __init__(self):
         super().__init__(
             name="DeepResearcher",
-            model=AGENT_MODELS["deep_researcher"],  # openrouter/polaris-alpha for advanced reasoning
+            model=AGENT_MODELS["deep_researcher"],  # deepseek-reasoner for advanced reasoning
             role="Senior investment researcher and decision maker",
             temperature=0.4,  # Balanced for detailed output
             max_tokens=8000  # More tokens for comprehensive analysis
         )
         # Fallback model if primary model fails
-        self.fallback_model = "deepseek/deepseek-chat-v3.1"
+        self.fallback_model = "deepseek-v3.1"
         self.using_fallback = False
 
     def reset_fallback_state(self):

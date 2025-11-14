@@ -1,7 +1,7 @@
 """
 Risk Manager Agent
 Analyzes portfolio risk, position sizing, and risk metrics
-Model: deepseek/deepseek-r1-0528 (large model for complex risk assessment)
+Model: deepseek-reasoner (large model for complex risk assessment)
 """
 
 import logging
@@ -48,20 +48,20 @@ class PortfolioRisk(BaseModel):
 class RiskManagerAgent:
     """
     Agent responsible for comprehensive risk analysis
-    Uses: deepseek/deepseek-r1-0528 for complex risk assessment reasoning
+    Uses: deepseek-reasoner for complex risk assessment reasoning
     """
     
     def __init__(
         self,
         openrouter_api_key: str = None,
-        model: str = "deepseek/deepseek-r1-0528"
+        model: str = "deepseek-reasoner"
     ):
         """
         Initialize Risk Manager Agent
         
         Args:
             openrouter_api_key: OpenRouter API key
-            model: Model to use (default: deepseek/deepseek-r1-0528)
+            model: Model to use (default: deepseek-reasoner)
         """
         self.model = model
         

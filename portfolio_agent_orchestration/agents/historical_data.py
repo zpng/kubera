@@ -1,7 +1,7 @@
 """
 Historical Data Agent
 Pulls historical stock data using yfinance
-Model: deepseek/deepseek-chat-v3.1 (fast, good with tools)
+Model: deepseek-v3.1 (fast, good with tools)
 """
 import logging
 from typing import Dict, Any, List

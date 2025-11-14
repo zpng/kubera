@@ -1,7 +1,7 @@
 """
 Twitter Sentiment Agent
 Collects and analyzes sentiment from Twitter/X
-Model: nousresearch/hermes-3-llama-3.1-405b (strong at multi-turn conversation and sentiment analysis)
+Model: deepseek-reasoner (strong at multi-turn conversation and sentiment analysis)
 """
 import logging
 from typing import Dict, Any, List

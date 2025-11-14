@@ -1,7 +1,7 @@
 """
 Company Info Agent
 Collects company fundamentals, earnings, and detailed company information
-Model: deepseek/deepseek-r1-distill-llama-70b (cost-efficient reasoning for fundamentals)
+Model: deepseek-reasoner (cost-efficient reasoning for fundamentals)
 """
 import logging
 from typing import Dict, Any

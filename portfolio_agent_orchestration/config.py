@@ -27,16 +27,16 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
 
 # Model Selection for Each Agent
-# Note: deep_researcher has automatic fallback to deepseek/deepseek-chat-v3.1 if primary model fails
+# Note: deep_researcher has automatic fallback to deepseek-v3.1 if primary model fails
 AGENT_MODELS = {
-    "portfolio_loader": "deepseek/deepseek-chat-v3.1",
-    "historical_data": "deepseek/deepseek-chat-v3.1",
-    "news_fetcher": "google/gemini-2.0-flash-exp",
-    "company_info": "deepseek/deepseek-r1-distill-llama-70b",
-    "sentiment_twitter": "nousresearch/hermes-3-llama-3.1-405b",
-    "sentiment_reddit": "nousresearch/hermes-3-llama-3.1-405b",
-    "risk_manager": "deepseek/deepseek-r1-0528",
-    "deep_researcher": "openrouter/polaris-alpha"  # Advanced reasoning model with fallback to deepseek/deepseek-chat-v3.1
+    "portfolio_loader": "deepseek-v3.1",
+    "historical_data": "deepseek-v3.1",
+    "news_fetcher": "gemini-2.0-flash-exp",
+    "company_info": "deepseek-reasoner",
+    "sentiment_twitter": "deepseek-reasoner",
+    "sentiment_reddit": "deepseek-reasoner",
+    "risk_manager": "deepseek-reasoner",
+    "deep_researcher": "deepseek-reasoner"  # Advanced reasoning model with fallback to deepseek-v3.1
 }
 
 # Agent Configuration

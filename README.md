@@ -151,8 +151,8 @@ Each agent uses the optimal model for its task:
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| Portfolio Loader | deepseek-chat-v3.1 | Fast structured data parsing |
-| Historical/News | deepseek-chat-v3.1 | Efficient data retrieval |
+| Portfolio Loader | deepseek-v3.1 | Fast structured data parsing |
+| Historical/News | deepseek-v3.1 | Efficient data retrieval |
 | Company Info | deepseek-r1-distill-llama-70b | Cost-efficient analysis |
 | Sentiment | hermes-3-llama-3.1-405b | Strong at sentiment/conversation |
 | Risk Manager | deepseek-r1-0528 | Complex risk calculations |

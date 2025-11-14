@@ -1,7 +1,7 @@
 """
 Portfolio Loader Agent
 Loads and validates portfolio.json data
-Model: deepseek/deepseek-chat-v3.1 (fast, good with structured data)
+Model: deepseek-v3.1 (fast, good with structured data)
 """
 import json
 import logging

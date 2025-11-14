@@ -1,7 +1,7 @@
 """
 Twitter Sentiment Agent
 Collects and analyzes sentiment from Twitter for portfolio stocks
-Model: deepseek/deepseek-chat-v3.1 (efficient text analysis with tool use)
+Model: deepseek-v3.1 (efficient text analysis with tool use)
 """
 
 import logging
@@ -85,20 +85,20 @@ def fetch_twitter_data(symbol: str, limit: int = 20) -> List[Dict[str, Any]]:
 class TwitterSentimentAgent:
     """
     Agent responsible for collecting and analyzing Twitter sentiment
-    Uses: deepseek/deepseek-chat-v3.1 for efficient sentiment analysis
+    Uses: deepseek-v3.1 for efficient sentiment analysis
     """
     
     def __init__(
         self,
         openrouter_api_key: str = None,
-        model: str = "deepseek/deepseek-chat-v3.1"
+        model: str = "deepseek-v3.1"
     ):
         """
         Initialize Twitter Sentiment Agent
         
         Args:
             openrouter_api_key: OpenRouter API key
-            model: Model to use (default: deepseek/deepseek-chat-v3.1)
+            model: Model to use (default: deepseek-v3.1)
         """
         self.model = model
         

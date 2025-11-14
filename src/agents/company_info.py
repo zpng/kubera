@@ -1,7 +1,7 @@
 """
 Company Info Agent
 Collects comprehensive company fundamentals, earnings, and financial data
-Model: deepseek/deepseek-r1-distill-llama-70b (cost-efficient reasoning for financial analysis)
+Model: deepseek-reasoner (cost-efficient reasoning for financial analysis)
 """
 
 import logging
@@ -140,20 +140,20 @@ def get_quarterly_earnings(symbol: str) -> Dict[str, Any]:
 class CompanyInfoAgent:
     """
     Agent responsible for collecting comprehensive company information
-    Uses: deepseek/deepseek-r1-distill-llama-70b for efficient financial reasoning
+    Uses: deepseek-reasoner for efficient financial reasoning
     """
     
     def __init__(
         self,
         openrouter_api_key: str = None,
-        model: str = "deepseek/deepseek-r1-distill-llama-70b"
+        model: str = "deepseek-reasoner"
     ):
         """
         Initialize Company Info Agent
         
         Args:
             openrouter_api_key: OpenRouter API key
-            model: Model to use (default: deepseek/deepseek-r1-distill-llama-70b)
+            model: Model to use (default: deepseek-reasoner)
         """
         self.model = model
         

@@ -1,7 +1,7 @@
 """
 Portfolio Loader Agent
 Reads portfolio JSON and provides current holdings data for analysis
-Model: deepseek/deepseek-chat-v3.1 (fast, efficient data processing)
+Model: deepseek-v3.1 (fast, efficient data processing)
 """
 
 import json
@@ -38,14 +38,14 @@ class PortfolioData(BaseModel):
 class PortfolioLoaderAgent:
     """
     Agent responsible for loading and validating portfolio data
-    Uses: deepseek/deepseek-chat-v3.1 for fast data processing and validation
+    Uses: deepseek-v3.1 for fast data processing and validation
     """
     
     def __init__(
         self,
         portfolio_path: str = None,
         openrouter_api_key: str = None,
-        model: str = "deepseek/deepseek-chat-v3.1"
+        model: str = "deepseek-v3.1"
     ):
         """
         Initialize Portfolio Loader Agent
@@ -53,7 +53,7 @@ class PortfolioLoaderAgent:
         Args:
             portfolio_path: Path to portfolio.json file
             openrouter_api_key: OpenRouter API key
-            model: Model to use (default: deepseek/deepseek-chat-v3.1)
+            model: Model to use (default: deepseek-v3.1)
         """
         self.portfolio_path = portfolio_path or self._get_default_portfolio_path()
         self.model = model
