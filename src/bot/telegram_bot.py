@@ -244,7 +244,14 @@ class TelegramBot:
     async def watchlist_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /watchlist command"""
         try:
-            watchlist = self.pipeline.portfolio_config.get('watchlist', {}).get('stocks', [])
+            import json
+            from pathlib import Path
+
+            portfolio_path = Path(__file__).parent.parent.parent / "config" / "portfolio.json"
+            with open(portfolio_path, 'r') as f:
+                portfolio_data = json.load(f)
+
+            watchlist = portfolio_data.get('watchlist', {}).get('stocks', [])
             
             if not watchlist:
                 await update.message.reply_text("👀 你的自选列表为空。")
@@ -253,14 +260,16 @@ class TelegramBot:
             message = "👀 **自选列表**\n\n"
             
             for i, symbol in enumerate(watchlist, 1):
-                # Get current price
                 try:
-                    price_info = self.market_data_provider.get_stock_price(symbol)
-                    current_price = price_info.get('current_price', 'N/A')
-                    change_pct = price_info.get('change_percent', 0)
-                    emoji = "🟢" if change_pct >= 0 else "🔴"
-                    message += f"{i}. **{symbol}** - ${current_price} {emoji} {change_pct:+.2f}%\n"
-                except:
+                    if self.market_data_provider:
+                        latest_price = self.market_data_provider.get_latest_price(symbol)
+                        if latest_price is not None:
+                            message += f"{i}. **{symbol}** - ${latest_price}\n"
+                        else:
+                            message += f"{i}. **{symbol}**\n"
+                    else:
+                        message += f"{i}. **{symbol}**\n"
+                except Exception:
                     message += f"{i}. **{symbol}**\n"
             
             message += f"\n**合计：** {len(watchlist)} 支股票"
@@ -284,6 +293,12 @@ class TelegramBot:
         )
         
         try:
+            if not self.pipeline:
+                await update.message.reply_text(
+                    "⚠️ 旧版分析管线不可用。请使用 `/analyze_portfolio` 运行全新多智能体工作流。",
+                    parse_mode='Markdown'
+                )
+                return
             recommendations = await asyncio.to_thread(
                 self.pipeline.run_daily_analysis,
                 analyze_portfolio=True,
@@ -470,7 +485,15 @@ class TelegramBot:
     
     async def analyze_watchlist_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /analyze_watchlist command"""
-        watchlist_count = len(self.pipeline.portfolio_config.get('watchlist', {}).get('stocks', []))
+        try:
+            import json
+            from pathlib import Path
+            portfolio_path = Path(__file__).parent.parent.parent / "config" / "portfolio.json"
+            with open(portfolio_path, 'r') as f:
+                portfolio_data = json.load(f)
+            watchlist_count = len(portfolio_data.get('watchlist', {}).get('stocks', []))
+        except Exception:
+            watchlist_count = 0
         
         await update.message.reply_text(
             f"🔍 **分析自选列表**\n\n"
@@ -480,6 +503,12 @@ class TelegramBot:
         )
         
         try:
+            if not self.pipeline:
+                await update.message.reply_text(
+                    "⚠️ 旧版分析管线不可用。该命令暂不可用。请使用 `/analyze_portfolio`。",
+                    parse_mode='Markdown'
+                )
+                return
             recommendations = await asyncio.to_thread(
                 self.pipeline.run_daily_analysis,
                 analyze_portfolio=False,
@@ -505,6 +534,12 @@ class TelegramBot:
         )
         
         try:
+            if not self.pipeline:
+                await update.message.reply_text(
+                    "⚠️ 旧版分析管线不可用。该命令暂不可用。请使用 `/analyze_portfolio`。",
+                    parse_mode='Markdown'
+                )
+                return
             recommendations = await asyncio.to_thread(
                 self.pipeline.run_daily_analysis,
                 analyze_portfolio=False,
@@ -522,8 +557,13 @@ class TelegramBot:
     async def status_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /status command"""
         try:
-            portfolio_count = len(self.pipeline.portfolio_config.get('portfolio', {}).get('stocks', []))
-            watchlist_count = len(self.pipeline.portfolio_config.get('watchlist', {}).get('stocks', []))
+            import json
+            from pathlib import Path
+            portfolio_path = Path(__file__).parent.parent.parent / "config" / "portfolio.json"
+            with open(portfolio_path, 'r') as f:
+                portfolio_data = json.load(f)
+            portfolio_count = len(portfolio_data.get('portfolio', {}).get('stocks', []))
+            watchlist_count = len(portfolio_data.get('watchlist', {}).get('stocks', []))
             
             status_text = f"""
 ⚙️ **系统状态**
