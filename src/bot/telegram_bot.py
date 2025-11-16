@@ -398,6 +398,7 @@ class TelegramBot:
             conviction = result.get("conviction", 5)
             target_price = result.get("target_price", 0)
             rationale = result.get("rationale", "No analysis available")
+            options = result.get("options_strategy", {})
             
             emoji = emoji_map.get(decision, "⚪")
             
@@ -408,6 +409,16 @@ class TelegramBot:
 """
             if target_price > 0:
                 stock_msg += f"**目标价：** ${target_price:.2f}\n"
+
+            if options:
+                strat_name = options.get("strategy") or "N/A"
+                summary = options.get("summary") or ""
+                params = options.get("parameters") or ""
+                stock_msg += "\n**期权策略：** " + str(strat_name) + "\n"
+                if summary:
+                    stock_msg += "**理由：** " + str(summary) + "\n"
+                if params:
+                    stock_msg += "**参数建议：** " + str(params) + "\n"
             
             # Split rationale into chunks if too long (Telegram limit is 4096 chars per message)
             stock_msg += f"\n**详细分析：**\n{rationale}\n"

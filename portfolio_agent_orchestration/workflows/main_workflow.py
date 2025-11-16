@@ -16,7 +16,8 @@ from ..agents import (
     TwitterSentimentAgent,
     RedditSentimentAgent,
     RiskManagerAgent,
-    DeepResearcherAgent
+    DeepResearcherAgent,
+    OptionsStrategyAgent
 )
 from ..agents.agent_evaluator import AgentEvaluator
 from ..agents.fact_checker import FactCheckerAgent
@@ -56,6 +57,7 @@ class PortfolioAnalysisWorkflow:
         
         # Stage 4: Deep Research & Decision Making
         self.deep_researcher = DeepResearcherAgent()
+        self.options_strategy = OptionsStrategyAgent()
         
         # Validators
         self.evaluator = AgentEvaluator()
@@ -164,6 +166,11 @@ class PortfolioAnalysisWorkflow:
             
             research_results = state.get("research_results", {})
             logger.info(f"✅ Research Complete for {len(research_results)} stocks")
+
+            # Stage 4.5: Options Strategy Recommendations
+            logger.info("\n🛡️  STAGE 4.5: Recommending Options Strategies...")
+            state = self.options_strategy.process(state)
+            logger.info("✅ Options strategy recommendations added")
             
             # Stage 5: Fact Checking
             logger.info("\n🔍 STAGE 5: Fact Checking Research Outputs...")
@@ -262,6 +269,7 @@ class PortfolioAnalysisWorkflow:
                 decision = result.get("decision", "HOLD")
                 conviction = result.get("conviction", 5)
                 target_price = result.get("target_price", 0)
+                options = result.get("options_strategy", {})
                 
                 # Emoji based on decision
                 emoji_map = {
@@ -276,6 +284,10 @@ class PortfolioAnalysisWorkflow:
                 message += f"Conviction: {conviction}/10\n"
                 if target_price > 0:
                     message += f"Target Price: ${target_price:.2f}\n"
+                if options:
+                    message += "Options: " + str(options.get("strategy", "N/A")) + "\n"
+                    if options.get("summary"):
+                        message += "Reason: " + str(options.get("summary")) + "\n"
                 message += f"\n"
                 
                 # Add truncated detailed analysis

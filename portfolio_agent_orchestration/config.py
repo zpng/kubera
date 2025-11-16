@@ -36,7 +36,8 @@ AGENT_MODELS = {
     "sentiment_twitter": "deepseek-reasoner",
     "sentiment_reddit": "deepseek-reasoner",
     "risk_manager": "deepseek-reasoner",
-    "deep_researcher": "deepseek-reasoner"  # Advanced reasoning model with fallback to deepseek-v3.1
+    "deep_researcher": "deepseek-reasoner",
+    "options_strategy": "deepseek-reasoner"
 }
 
 # Agent Configuration
