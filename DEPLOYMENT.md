@@ -115,6 +115,22 @@ Run: `docker-compose up -d`
 
 ---
 
+### Docker Compose 重编译与启动
+
+```bash
+# 在项目根目录执行
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+
+# 查看运行日志（可选）
+docker compose logs -f kubera
+
+# 一次性重建并启动（可选）
+docker compose up -d --build
+```
+
+
 ## Terraform Deployment (Railway)
 
 ### Setup
