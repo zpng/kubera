@@ -10,6 +10,7 @@ from .sentiment_twitter import TwitterSentimentAgent
 from .sentiment_reddit import RedditSentimentAgent
 from .risk_manager import RiskManagerAgent
 from .deep_researcher import DeepResearcherAgent
+from .options_strategy import OptionsStrategyAgent
 
 __all__ = [
     'PortfolioLoaderAgent',
@@ -20,5 +21,6 @@ __all__ = [
     'RedditSentimentAgent',
     'RiskManagerAgent',
     'DeepResearcherAgent',
+    'OptionsStrategyAgent',
 ]
 
