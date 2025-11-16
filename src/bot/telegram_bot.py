@@ -14,6 +14,8 @@ import asyncio
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.request import HTTPXRequest
+from telegram.error import TimedOut, NetworkError
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -65,8 +67,14 @@ class TelegramBot:
         else:
             logger.info("✅ Using new multi-agent workflow only")
         
-        # Build application
-        self.application = Application.builder().token(token).build()
+        # Build application with custom HTTPX timeouts
+        request = HTTPXRequest(
+            connect_timeout=int(os.getenv('TELEGRAM_CONNECT_TIMEOUT', '20')),
+            read_timeout=int(os.getenv('TELEGRAM_READ_TIMEOUT', '60')),
+            write_timeout=int(os.getenv('TELEGRAM_WRITE_TIMEOUT', '60')),
+            pool_timeout=int(os.getenv('TELEGRAM_POOL_TIMEOUT', '5')),
+        )
+        self.application = Application.builder().token(token).request(request).build()
         
         # Register handlers
         self._register_handlers()
@@ -711,17 +719,19 @@ class TelegramBot:
     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle errors"""
         logger.error(f"Exception while handling an update: {context.error}")
-        
         if isinstance(update, Update) and update.effective_message:
-            await update.effective_message.reply_text(
-                "❌ 发生错误，请稍后重试。"
-            )
+            try:
+                await update.effective_message.reply_text("❌ 发生错误，请稍后重试。")
+            except TimedOut:
+                logger.error("Timed out while replying to user; skipped sending error message")
+            except NetworkError as e:
+                logger.error(f"Network error while sending error message: {e}")
     
     def run(self) -> None:
         """Start the bot"""
         logger.info("🤖 Starting Kubera Telegram Bot...")
         logger.info("✅ Kubera Bot is running! Press Ctrl+C to stop.")
-        self.application.run_polling(allowed_updates=Update.ALL_TYPES)
+        self.application.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True, poll_interval=0.5)
 
 
 def main():

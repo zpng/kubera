@@ -106,6 +106,10 @@ services:
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CONNECT_TIMEOUT=${TELEGRAM_CONNECT_TIMEOUT}
+      - TELEGRAM_READ_TIMEOUT=${TELEGRAM_READ_TIMEOUT}
+      - TELEGRAM_WRITE_TIMEOUT=${TELEGRAM_WRITE_TIMEOUT}
+      - TELEGRAM_POOL_TIMEOUT=${TELEGRAM_POOL_TIMEOUT}
     volumes:
       - ./config:/app/config
     restart: unless-stopped
@@ -128,6 +132,15 @@ docker compose logs -f kubera
 
 # 一次性重建并启动（可选）
 docker compose up -d --build
+```
+
+#### 推荐的超时环境变量（写入 `.env`）
+
+```bash
+TELEGRAM_CONNECT_TIMEOUT=20
+TELEGRAM_READ_TIMEOUT=60
+TELEGRAM_WRITE_TIMEOUT=60
+TELEGRAM_POOL_TIMEOUT=5
 ```
 
 
