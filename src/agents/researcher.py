@@ -92,7 +92,8 @@ class DeepThinkingResearcher:
         company_fundamentals: Dict[str, Any],
         twitter_sentiment: Dict[str, Any],
         reddit_sentiment: Dict[str, Any],
-        position_risk: Dict[str, Any]
+        position_risk: Dict[str, Any],
+        available_cash_cny: Any = None
     ) -> StockRecommendation:
         """
         Synthesize all data sources to make final recommendation
@@ -150,6 +151,10 @@ Current Price: ${current_price}
 Current Value: ${current_value}
 Unrealized P&L: ${unrealized_pl} ({unrealized_pl_percent:+.2f}%)
 Position Size: {position_size_percent:.1f}% of portfolio
+
+**CASH CONTEXT**
+Available Cash (CNY): {available_cash_cny}
+Instruction: When suggesting actions, consider available cash and provide qualitative guidance for using cash across stocks and options. Do not propose exact amounts.
 
 **2. TECHNICAL & PRICE DATA**
 Current Price: ${current_price}
@@ -272,6 +277,7 @@ Provide a DETAILED investment recommendation in this EXACT format:
                 "unrealized_pl": safe_get(portfolio_comparison, 'unrealized_pl', default=0),
                 "unrealized_pl_percent": safe_get(portfolio_comparison, 'unrealized_pl_percent', default=0),
                 "position_size_percent": safe_get(position_risk, 'position_size_percent', default=0),
+                "available_cash_cny": available_cash_cny if available_cash_cny is not None else 'N/A',
                 "previous_close": safe_get(portfolio_comparison, 'previous_close', default=0),
                 "change_percent": safe_get(portfolio_comparison, 'change_percent', default=0),
                 "fifty_two_week_high": safe_get(company_fundamentals, 'fifty_two_week_high', default='N/A'),
@@ -437,7 +443,8 @@ Provide a DETAILED investment recommendation in this EXACT format:
                     company_fundamentals=company_analyses.get(symbol, {}),
                     twitter_sentiment=twitter_sentiments.get(symbol, {}),
                     reddit_sentiment=reddit_sentiments.get(symbol, {}),
-                    position_risk=position_risks.get(symbol, {})
+                    position_risk=position_risks.get(symbol, {}),
+                    available_cash_cny=all_agent_data.get('available_cash_cny')
                 )
                 recommendations.append(recommendation)
             

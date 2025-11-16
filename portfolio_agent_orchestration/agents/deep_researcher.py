@@ -50,6 +50,7 @@ class DeepResearcherAgent(BaseAgent):
         twitter_sent = all_data.get("twitter_sentiment", {})
         reddit_sent = all_data.get("reddit_sentiment", {})
         risk = all_data.get("risk_metrics", {})
+        available_cash_cny = all_data.get("available_cash_cny")
         
         # Get actual values with fallbacks
         current_price = historical.get('metrics', {}).get('current_price') or portfolio_pos.get('current_price', 0)
@@ -93,12 +94,16 @@ class DeepResearcherAgent(BaseAgent):
 
 ## PROVIDED DATA FOR {symbol}
 
-### 1. PORTFOLIO POSITION (ACTUAL HOLDINGS)
-- Shares Owned: {shares}
-- Average Cost Basis: ${avg_cost}
-- Current Price: ${current_price}
-- Position Value: ${shares * current_price:.2f}
-- Unrealized P/L: ${(current_price - avg_cost) * shares:.2f} ({((current_price/avg_cost - 1) * 100):.1f}%)
+        ### 1. PORTFOLIO POSITION (ACTUAL HOLDINGS)
+        - Shares Owned: {shares}
+        - Average Cost Basis: ${avg_cost}
+        - Current Price: ${current_price}
+        - Position Value: ${shares * current_price:.2f}
+        - Unrealized P/L: ${(current_price - avg_cost) * shares:.2f} ({((current_price/avg_cost - 1) * 100):.1f}%)
+
+        ### INVESTOR CASH CONTEXT
+        - Available Cash (CNY): {available_cash_cny if available_cash_cny is not None else 'N/A'}
+        - Guidance Constraint: Do not write numbers in prose; use qualitative terms only when referencing cash usage.
 
 ### 2. HISTORICAL PRICE DATA (FROM YFINANCE) - COPY EXACTLY AS SHOWN
 
@@ -289,23 +294,26 @@ Write your rationale below. DO NOT repeat or substitute these numbers - they are
 **KEY FACTORS**:
 [List the 3 most important factors from the data above]
 
-**POSITION SIZING**:
-[Recommendation on position size given the current P/L shown above]
+        **POSITION SIZING**:
+        [Recommendation on position size given the current P/L shown above; if available cash is present, provide qualitative guidance (e.g., "small add", "moderate add") without numeric amounts]
 
 **TIMEFRAME**:
 [Short-term (0-3m) vs Long-term (6-12m) outlook]
 
-**8. ACTION ITEMS**
+        **8. ACTION ITEMS**
 
 Current Price: ${current_price}
 Your Target Price: $[specify your target]
 
-- **Immediate Action**: [What to do now with this position]
-- **Watch For**: [What metrics/events to monitor - reference metrics by name only, not values]
-- **Price Target Rationale**: [Why you chose your target price]
+        - **Immediate Action**: [What to do now with this position]
+        - **Watch For**: [What metrics/events to monitor - reference metrics by name only, not values]
+        - **Price Target Rationale**: [Why you chose your target price]
 
-CRITICAL: Write AT LEAST 500 words total across all sections. DO NOT write any numbers - all data is already provided in sections 1-7 above!
-"""
+        **CASH USAGE GUIDANCE**:
+        [Given the available cash context, provide qualitative guidance on whether to allocate funds to this equity or prefer options strategies; avoid numeric amounts]
+
+        CRITICAL: Write AT LEAST 500 words total across all sections. DO NOT write any numbers - all data is already provided in sections 1-7 above!
+        """
         
         return prompt
     
@@ -795,7 +803,8 @@ CRITICAL WARNINGS:
                 (r for r in state.get("risk_assessment", {}).get("positions_risk", []) 
                  if r.get("symbol") == symbol),
                 {}
-            )
+            ),
+            "available_cash_cny": state.get("portfolio_data", {}).get("portfolio", {}).get("available_cash_cny")
         }
     
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:

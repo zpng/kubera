@@ -10,6 +10,7 @@
     "timezone_id": "America/Chicago",
     "timezone_country": "United States",
     "timezone_region": "America",
+    "available_cash_cny": 200000,
     "stocks": [
       {
         "symbol": "AVGO",

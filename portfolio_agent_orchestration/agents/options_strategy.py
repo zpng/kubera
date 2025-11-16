@@ -32,7 +32,8 @@ class OptionsStrategyAgent(BaseAgent):
             "twitter_sentiment": state.get("twitter_sentiment", {}).get(symbol, {}),
             "reddit_sentiment": state.get("reddit_sentiment", {}).get(symbol, {}),
             "risk_metrics": next((r for r in state.get("risk_assessment", {}).get("positions_risk", []) if r.get("symbol") == symbol), {}),
-            "research_result": state.get("research_results", {}).get(symbol, {})
+            "research_result": state.get("research_results", {}).get(symbol, {}),
+            "available_cash_cny": state.get("portfolio_data", {}).get("portfolio", {}).get("available_cash_cny")
         }
 
     def create_prompt(self, symbol: str, all_data: Dict[str, Any]) -> str:
@@ -41,6 +42,7 @@ class OptionsStrategyAgent(BaseAgent):
         risk = all_data.get("risk_metrics", {})
         pos = all_data.get("portfolio_position", {})
         research = all_data.get("research_result", {})
+        cash_cny = all_data.get("available_cash_cny")
         trend = hist.get("trends", {}).get("trend", "Unknown")
         vol = hist.get("metrics", {}).get("volatility", "N/A")
         decision = research.get("decision", "HOLD")
@@ -56,6 +58,7 @@ class OptionsStrategyAgent(BaseAgent):
             f"- 输出必须为 JSON，字段：strategy, summary, parameters, rationale(数组), risk_notes, suitability。\n"
             f"- strategy 必须在集合内：['Covered Call','Cash-Secured Put','Protective Put','Collar','Bull Call Spread','Bear Put Spread','Iron Condor','Long Call','Long Put','N/A']。\n"
             f"- 中文输出。\n"
+            f"- 资金约束：可用现金(人民币)：{cash_cny if cash_cny is not None else '未知'}；请在 summary 与 suitability 中说明在该资金约束下的可执行性，不给出精确金额。\n"
         )
         return prompt
 

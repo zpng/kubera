@@ -190,7 +190,8 @@ class PortfolioAnalysisWorkflow:
                 'company_data': company_data,
                 'twitter_data': twitter_data,
                 'reddit_data': reddit_data,
-                'risk_data': risk_data
+                'risk_data': risk_data,
+                'available_cash_cny': portfolio_data.get('available_cash_cny')
             }
             final_recommendations = self.researcher.run(all_agent_data)
             workflow_results['final_recommendations'] = final_recommendations

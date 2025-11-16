@@ -203,7 +203,8 @@ Add timestamp for last_updated."""),
             "validated_data": validated_data.dict(),
             "symbols": symbols,
             "total_holdings": len(holdings),
-            "status": "success"
+            "status": "success",
+            "available_cash_cny": portfolio_data.get('portfolio', {}).get('available_cash_cny')
         }
         
         logger.info(f"Portfolio Loader Agent completed - {len(holdings)} holdings processed")
