@@ -311,9 +311,26 @@ class PortfolioAnalysisWorkflow:
         # Options recommendations section
         options_recs = workflow_results.get('options_recommendations', [])
         if options_recs:
-            summary += "🧩 **Options Recommendations**\n\n"
+            def map_strategy(s: str) -> str:
+                m = {
+                    "cash_secured_put": "现金担保卖出认沽",
+                    "bull_call_spread": "牛市垂直价差",
+                    "protective_put": "保护性认沽",
+                    "long_straddle": "跨式（买入认购+认沽）",
+                    "collar": "领式策略",
+                    "covered_call": "备兑认购",
+                }
+                return m.get(s, s)
+            def map_expiry(e: str) -> str:
+                m = {
+                    "next_month": "下月到期",
+                    "second_month": "次月到期",
+                    "next_quarter": "次季月到期",
+                }
+                return m.get(e, e)
+            summary += "🧩 **期权建议**\n\n"
             for opt in options_recs:
-                summary += f"• {opt.get('symbol')} | {opt.get('strategy')} | Expiry: {opt.get('expiry')} | Budget: ￥{opt.get('budget_rmb',0)}\n"
+                summary += f"• {opt.get('symbol')} | {map_strategy(opt.get('strategy','-'))} | 到期：{map_expiry(opt.get('expiry','-'))} | 预算：￥{opt.get('budget_rmb',0)}\n"
             summary += "\n"
 
         return summary
@@ -369,4 +386,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

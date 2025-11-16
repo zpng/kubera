@@ -463,15 +463,55 @@ class TelegramBot:
 
         # Send options recommendations if present
         if options_recs:
+            def map_strategy(s: str) -> str:
+                m = {
+                    "cash_secured_put": "现金担保卖出认沽",
+                    "bull_call_spread": "牛市垂直价差",
+                    "protective_put": "保护性认沽",
+                    "long_straddle": "跨式（买入认购+认沽）",
+                    "collar": "领式策略",
+                    "covered_call": "备兑认购",
+                }
+                return m.get(s, s)
+            def map_leg_type(t: str) -> str:
+                m = {
+                    "sell_put": "卖出认沽",
+                    "buy_put": "买入认沽",
+                    "buy_call": "买入认购",
+                    "sell_call": "卖出认购",
+                }
+                return m.get(t, t)
+            def map_moneyness(mn: str) -> str:
+                m = {
+                    "OTM_8to10pct": "价外8–10%",
+                    "OTM_5to10pct": "价外5–10%",
+                    "OTM_8to12pct": "价外8–12%",
+                    "ATM": "平值",
+                    "ATM_or_ITM_minor": "平值或略价内",
+                }
+                return m.get(mn, mn)
+            def map_expiry(e: str) -> str:
+                m = {
+                    "next_month": "下月到期",
+                    "second_month": "次月到期",
+                    "next_quarter": "次季月到期",
+                }
+                return m.get(e, e)
             opt_msg = "🧩 **期权建议**\n\n"
             for opt in options_recs:
-                sym = opt.get("symbol")
-                strat = opt.get("strategy")
-                expiry = opt.get("expiry")
+                sym = opt.get("symbol", "-")
+                strat = map_strategy(opt.get("strategy", "-"))
+                expiry = map_expiry(opt.get("expiry", "-"))
                 budget = opt.get("budget_rmb", 0)
                 legs = opt.get("legs", [])
-                leg_summary = ", ".join([f"{l.get('type')}:{l.get('moneyness','')}/{l.get('contracts', l.get('units',''))}" for l in legs])
-                opt_msg += f"• {sym} | {strat} | 到期：{expiry} | 预算：￥{budget}\n  腿：{leg_summary}\n"
+                leg_lines = []
+                for l in legs:
+                    t = map_leg_type(l.get("type", "-"))
+                    mn = map_moneyness(l.get("moneyness", ""))
+                    qty = l.get("contracts") if l.get("contracts") is not None else l.get("units")
+                    qty_label = f"合约张数：{qty}张" if l.get("contracts") is not None else f"组数：{qty}组"
+                    leg_lines.append(f"{t}（{mn}，{qty_label}）")
+                opt_msg += f"• {sym} | {strat} | 到期：{expiry} | 预算：￥{budget}\n  腿：" + ", ".join(leg_lines) + "\n"
             opt_msg += "\n"
             try:
                 await update.message.reply_text(opt_msg, parse_mode='Markdown')

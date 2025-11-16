@@ -302,11 +302,28 @@ class PortfolioAnalysisWorkflow:
         # Options recommendations section
         options_recs = state.get("options_recommendations", [])
         if options_recs:
-            message += "\n🧩 **OPTIONS RECOMMENDATIONS**\n\n"
+            def map_strategy(s: str) -> str:
+                m = {
+                    "cash_secured_put": "现金担保卖出认沽",
+                    "bull_call_spread": "牛市垂直价差",
+                    "protective_put": "保护性认沽",
+                    "long_straddle": "跨式（买入认购+认沽）",
+                    "collar": "领式策略",
+                    "covered_call": "备兑认购",
+                }
+                return m.get(s, s)
+            def map_expiry(e: str) -> str:
+                m = {
+                    "next_month": "下月到期",
+                    "second_month": "次月到期",
+                    "next_quarter": "次季月到期",
+                }
+                return m.get(e, e)
+            message += "\n🧩 **期权建议**\n\n"
             for opt in options_recs:
-                sym = opt.get("symbol")
-                strat = opt.get("strategy")
-                expiry = opt.get("expiry")
+                sym = opt.get("symbol", "-")
+                strat = map_strategy(opt.get("strategy", "-"))
+                expiry = map_expiry(opt.get("expiry", "-"))
                 budget = opt.get("budget_rmb", 0)
                 message += f"• {sym} | {strat} | 到期：{expiry} | 预算：￥{budget}\n"
             message += "\n"
@@ -366,4 +383,3 @@ if __name__ == "__main__":
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
     test_workflow()
-

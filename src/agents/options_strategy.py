@@ -37,7 +37,7 @@ class OptionsStrategyAgent:
             return f"{months}_months"
 
     def _recommend_cash_secured_put(self, symbol: str, price_rmb: float, budget_rmb: int) -> Dict[str, Any]:
-        multiplier = 10_000
+        multiplier = 10_000 if self._is_cn_etf(symbol) else 100
         moneyness = "OTM_8to10pct"
         margin_per_contract = price_rmb * multiplier
         contracts = max(int(budget_rmb // margin_per_contract), 0)
@@ -94,7 +94,7 @@ class OptionsStrategyAgent:
         }
 
     def generate(self, symbols: List[str], comparisons: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        sym_list = symbols if symbols else self._default_cn_etfs()
+        sym_list = symbols
         comp_map = {c.get("symbol"): c for c in comparisons}
         total_budget = self.cash_budget_rmb
         csp_budget = int(total_budget * 0.6)
@@ -103,11 +103,13 @@ class OptionsStrategyAgent:
         straddle_budget = int(total_budget * 0.1)
 
         recs: List[Dict[str, Any]] = []
-        csp_symbol = next((s for s in sym_list if self._is_cn_etf(s)), self._default_cn_etfs()[0])
+        if not sym_list:
+            return recs
+        csp_symbol = sym_list[0]
         p1 = comp_map.get(csp_symbol, {}).get("current_price", 4.0)
         recs.append(self._recommend_cash_secured_put(csp_symbol, p1, csp_budget))
 
-        spread_symbol = "510050" if csp_symbol != "510050" else "510300"
+        spread_symbol = sym_list[1] if len(sym_list) > 1 else sym_list[0]
         p2 = comp_map.get(spread_symbol, {}).get("current_price", 3.0)
         recs.append(self._recommend_call_spread(spread_symbol, p2, spread_budget))
 

@@ -46,12 +46,8 @@ class OptionsStrategyAgent:
             return f"{months}_months"
 
     def _recommend_cash_secured_put(self, symbol: str, price_rmb: float, budget_rmb: int) -> Dict[str, Any]:
-        # Assume contract multiplier 10,000 for CN ETF options
-        multiplier = 10_000
-        # Choose 8–10% OTM
+        multiplier = 10_000 if self._is_cn_etf(symbol) else 100
         moneyness = "OTM_8to10pct"
-        # Estimate margin ~ strike * multiplier * 100% (cash-secured)
-        # Use current price as proxy for strike here
         margin_per_contract = price_rmb * multiplier
         max_contracts = max(int(budget_rmb // margin_per_contract), 0)
         contracts = max_contracts if max_contracts > 0 else 0
@@ -130,9 +126,7 @@ class OptionsStrategyAgent:
         # Try to get symbols and current prices from state
         symbols: List[str] = state.get("stock_symbols", [])
         comparisons = {c.get("symbol"): c for c in state.get("historical_data", {}).get("comparisons", [])}
-
-        # If portfolio is empty, use CN ETF defaults for demonstration and hedging
-        base_symbols = symbols if symbols else self._default_cn_etfs()
+        base_symbols = symbols
 
         # Allocate budgets per strategy
         total_budget = self.cash_budget_rmb
@@ -143,13 +137,17 @@ class OptionsStrategyAgent:
 
         recommendations: List[Dict[str, Any]] = []
 
-        # Prefer CN ETFs for cash-secured puts
-        chosen_csp_symbol = next((s for s in base_symbols if self._is_cn_etf(s)), self._default_cn_etfs()[0])
+        if not base_symbols:
+            state["options_recommendations"] = []
+            logger.info("No holdings found, skip options recommendations")
+            return state
+
+        chosen_csp_symbol = base_symbols[0]
         price = comparisons.get(chosen_csp_symbol, {}).get("current_price", 4.0)
         recommendations.append(self._recommend_cash_secured_put(chosen_csp_symbol, price, csp_budget))
 
         # Bull call spread on another ETF
-        chosen_spread_symbol = "510050" if chosen_csp_symbol != "510050" else "510300"
+        chosen_spread_symbol = base_symbols[1] if len(base_symbols) > 1 else base_symbols[0]
         price2 = comparisons.get(chosen_spread_symbol, {}).get("current_price", 3.0)
         recommendations.append(self._recommend_call_spread(chosen_spread_symbol, price2, spread_budget))
 
