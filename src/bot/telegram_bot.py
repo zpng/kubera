@@ -363,6 +363,7 @@ class TelegramBot:
         summary = state.get("portfolio_summary", {})
         risk = state.get("risk_assessment", {}).get("portfolio_risk", {})
         research = state.get("research_results", {})
+        options_recs = state.get("options_recommendations", [])
         
         # Portfolio Overview
         message = f"""🤖 **KUBERA 组合分析**
@@ -459,6 +460,23 @@ class TelegramBot:
         # Final summary with agent evaluation
         duration = state.get("workflow_duration", 0)
         evaluation = state.get("agent_evaluation", {})
+
+        # Send options recommendations if present
+        if options_recs:
+            opt_msg = "🧩 **期权建议**\n\n"
+            for opt in options_recs:
+                sym = opt.get("symbol")
+                strat = opt.get("strategy")
+                expiry = opt.get("expiry")
+                budget = opt.get("budget_rmb", 0)
+                legs = opt.get("legs", [])
+                leg_summary = ", ".join([f"{l.get('type')}:{l.get('moneyness','')}/{l.get('contracts', l.get('units',''))}" for l in legs])
+                opt_msg += f"• {sym} | {strat} | 到期：{expiry} | 预算：￥{budget}\n  腿：{leg_summary}\n"
+            opt_msg += "\n"
+            try:
+                await update.message.reply_text(opt_msg, parse_mode='Markdown')
+            except Exception:
+                await update.message.reply_text(opt_msg.replace('*',''))
         
         final_msg = f"""✅ **分析完成**
 

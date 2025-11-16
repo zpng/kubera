@@ -16,7 +16,8 @@ from ..agents import (
     TwitterSentimentAgent,
     RedditSentimentAgent,
     RiskManagerAgent,
-    DeepResearcherAgent
+    DeepResearcherAgent,
+    OptionsStrategyAgent
 )
 from ..agents.agent_evaluator import AgentEvaluator
 from ..agents.fact_checker import FactCheckerAgent
@@ -56,6 +57,9 @@ class PortfolioAnalysisWorkflow:
         
         # Stage 4: Deep Research & Decision Making
         self.deep_researcher = DeepResearcherAgent()
+
+        # Stage 5: Options Strategy
+        self.options_agent = OptionsStrategyAgent()
         
         # Validators
         self.evaluator = AgentEvaluator()
@@ -165,8 +169,14 @@ class PortfolioAnalysisWorkflow:
             research_results = state.get("research_results", {})
             logger.info(f"✅ Research Complete for {len(research_results)} stocks")
             
-            # Stage 5: Fact Checking
-            logger.info("\n🔍 STAGE 5: Fact Checking Research Outputs...")
+            # Stage 5: Options Strategy
+            logger.info("\n🧩 STAGE 5: Generating Options Strategy...")
+            state = self.options_agent.process(state)
+            options_count = len(state.get("options_recommendations", []))
+            logger.info(f"✅ Options Strategy Complete. Strategies: {options_count}")
+
+            # Stage 6: Fact Checking
+            logger.info("\n🔍 STAGE 6: Fact Checking Research Outputs...")
             fact_check_results = self.fact_checker.validate_all_research(research_results, state)
             state["fact_check_results"] = fact_check_results
             
@@ -175,8 +185,8 @@ class PortfolioAnalysisWorkflow:
             else:
                 logger.info("✅ All research outputs validated - no hallucinations detected")
             
-            # Stage 6: Agent Evaluation
-            logger.info("\n📊 STAGE 6: Evaluating Agent Performance...")
+            # Stage 7: Agent Evaluation
+            logger.info("\n📊 STAGE 7: Evaluating Agent Performance...")
             evaluation_results = self.evaluator.evaluate_workflow(state)
             state["agent_evaluation"] = evaluation_results
             
@@ -289,6 +299,18 @@ class PortfolioAnalysisWorkflow:
         
         # Workflow metadata
         duration = state.get("workflow_duration_seconds", 0)
+        # Options recommendations section
+        options_recs = state.get("options_recommendations", [])
+        if options_recs:
+            message += "\n🧩 **OPTIONS RECOMMENDATIONS**\n\n"
+            for opt in options_recs:
+                sym = opt.get("symbol")
+                strat = opt.get("strategy")
+                expiry = opt.get("expiry")
+                budget = opt.get("budget_rmb", 0)
+                message += f"• {sym} | {strat} | 到期：{expiry} | 预算：￥{budget}\n"
+            message += "\n"
+
         message += f"\n⏱️ Analysis completed in {duration:.1f} seconds"
         
         return message

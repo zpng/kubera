@@ -22,6 +22,7 @@ from agents.sentiment_twitter import TwitterSentimentAgent
 from agents.sentiment_reddit import RedditSentimentAgent
 from agents.risk_manager import RiskManagerAgent
 from agents.researcher import DeepThinkingResearcher
+from agents.options_strategy import OptionsStrategyAgent
 
 logger = logging.getLogger(__name__)
 
@@ -195,6 +196,16 @@ class PortfolioAnalysisWorkflow:
             final_recommendations = self.researcher.run(all_agent_data)
             workflow_results['final_recommendations'] = final_recommendations
             logger.info(f"✅ Final recommendations generated for {final_recommendations['total_stocks_analyzed']} stocks\n")
+
+            # STAGE 9: Options Strategy Recommendations
+            logger.info("🧩 STAGE 9: Generating Options Strategy Recommendations...")
+            options_agent = OptionsStrategyAgent()
+            options_recs = options_agent.generate(
+                symbols=portfolio_data.get('symbols', []),
+                comparisons=historical_data.get('comparisons', [])
+            )
+            workflow_results['options_recommendations'] = options_recs
+            logger.info(f"✅ Options strategies generated: {len(options_recs)}\n")
             
             # Calculate execution time
             end_time = datetime.now()
@@ -296,7 +307,15 @@ class PortfolioAnalysisWorkflow:
             
             summary += f"**Action Plan:**\n{rec['action_plan']}\n\n"
             summary += "=" * 40 + "\n\n"
-        
+
+        # Options recommendations section
+        options_recs = workflow_results.get('options_recommendations', [])
+        if options_recs:
+            summary += "🧩 **Options Recommendations**\n\n"
+            for opt in options_recs:
+                summary += f"• {opt.get('symbol')} | {opt.get('strategy')} | Expiry: {opt.get('expiry')} | Budget: ￥{opt.get('budget_rmb',0)}\n"
+            summary += "\n"
+
         return summary
 
 
