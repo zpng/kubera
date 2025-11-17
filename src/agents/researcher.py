@@ -217,6 +217,18 @@ Provide a DETAILED investment recommendation in this EXACT format:
 ### STOP LOSS: $[X.XX]
 ### TIME HORIZON: [short-term/medium-term/long-term]
 
+### TAKE PROFIT STRATEGY
+[Detailed explanation of why this target price was chosen, including technical levels, fundamental valuation, and risk/reward analysis]
+
+### STOP LOSS STRATEGY  
+[Detailed explanation of stop loss placement, including technical support levels, volatility considerations, and risk management principles]
+
+### RISK/REWARD ANALYSIS
+- Risk Amount: $[X.XX] per share ([X]% of current price)
+- Reward Amount: $[X.XX] per share ([X]% of current price)
+- Risk/Reward Ratio: [1:X]
+- Position Sizing Recommendation: [X]% of portfolio
+
 ### BULL CASE (3-5 bullet points)
 - [Specific bullish factor 1]
 - [Specific bullish factor 2]
@@ -251,7 +263,14 @@ Provide a DETAILED investment recommendation in this EXACT format:
 [Comprehensive explanation of decision-making process, weighing all factors]
 
 ### ACTION PLAN
-[Specific, actionable guidance: e.g., "BUY additional 10 shares at current levels", "HOLD and monitor earnings", "SELL 50% and move stop loss to $X", etc.]""")
+[Specific, actionable guidance: e.g., "BUY additional 10 shares at current levels with stop at $X and target $Y", "HOLD and raise stop loss to $X", "SELL 50% and move stop loss to $X", etc.]
+
+**CRITICAL GUIDELINES FOR PRICE TARGETS:**
+1. **BUY Decisions**: Target should be 15-25% above current price, stop loss 8-12% below
+2. **SELL Decisions**: Target should be 2-5% below current price for exit, stop loss 2-5% above for short covering
+3. **HOLD Decisions**: Adjust existing stops based on profit/loss position and market conditions
+4. **Volatility Adjustment**: Increase targets and stops for high-volatility stocks (beta > 1.5)
+5. **Time Horizon**: Short-term (1-4 weeks), medium-term (1-6 months), long-term (6+ months)""")
         ])
         
         # Prepare all data
@@ -374,12 +393,17 @@ Provide a DETAILED investment recommendation in this EXACT format:
         
         current_price = portfolio_comparison.get('current_price', 0)
         
+        # Enhanced take profit and stop loss calculation
+        target_price, stop_loss = self._calculate_price_targets(
+            symbol, decision, current_price, analysis_text, portfolio_comparison
+        )
+        
         return StockRecommendation(
             symbol=symbol,
             decision=decision,
             conviction=min(max(conviction, 1), 10),  # Ensure 1-10
-            target_price=current_price * 1.15 if decision == "BUY" else current_price * 0.95,
-            stop_loss=current_price * 0.90,
+            target_price=target_price,
+            stop_loss=stop_loss,
             time_horizon="medium-term",
             bull_case=self._extract_section(analysis_text, "BULL CASE"),
             bear_case=self._extract_section(analysis_text, "BEAR CASE"),
@@ -395,7 +419,108 @@ Provide a DETAILED investment recommendation in this EXACT format:
             action_plan=self._extract_section(analysis_text, "ACTION PLAN")
         )
     
-    def _extract_section(self, text: str, section_name: str) -> str:
+    def _calculate_price_targets(
+        self, 
+        symbol: str, 
+        decision: str, 
+        current_price: float, 
+        analysis_text: str,
+        portfolio_comparison: Dict[str, Any]
+    ) -> tuple[float, float]:
+        """
+        Calculate sophisticated take profit and stop loss targets based on:
+        - Current decision (BUY/HOLD/SELL)
+        - Technical analysis from the text
+        - Risk level and volatility
+        - Position status (profit/loss)
+        
+        Returns:
+            tuple: (target_price, stop_loss)
+        """
+        try:
+            # Extract existing targets from analysis text if available
+            target_price = self._extract_price_from_text(analysis_text, "TARGET PRICE")
+            stop_loss = self._extract_price_from_text(analysis_text, "STOP LOSS")
+            
+            if target_price > 0 and stop_loss > 0:
+                return target_price, stop_loss
+            
+            # Calculate based on decision and risk profile
+            unrealized_pl_percent = portfolio_comparison.get('unrealized_pl_percent', 0)
+            volatility = portfolio_comparison.get('volatility', 20)  # Default 20% annual volatility
+            
+            # Base risk/reward ratios
+            if decision == "BUY":
+                # For BUY decisions: 1:2 risk/reward ratio
+                risk_percent = 8 + (volatility / 100)  # 8-28% stop loss based on volatility
+                reward_percent = 16 + (volatility / 50)  # 16-56% target based on volatility
+                
+                target_price = current_price * (1 + reward_percent / 100)
+                stop_loss = current_price * (1 - risk_percent / 100)
+                
+            elif decision == "SELL":
+                # For SELL decisions: tighter stops, focus on capital preservation
+                if unrealized_pl_percent > 10:  # Profitable position
+                    # Protect 50% of profits
+                    profit_protection = current_price * (unrealized_pl_percent / 100) * 0.5
+                    stop_loss = current_price - profit_protection
+                    target_price = current_price * 0.95  # 5% downside target for exit
+                else:  # Losing position
+                    # Cut losses at 5-10% from current price
+                    loss_limit = min(10, 5 + (volatility / 100))
+                    stop_loss = current_price * (1 - loss_limit / 100)
+                    target_price = current_price * 0.98  # 2% downside target for exit
+                    
+            else:  # HOLD
+                if unrealized_pl_percent > 20:  # Profitable hold
+                    # Trailing stop to protect profits
+                    profit_protection = current_price * (unrealized_pl_percent / 100) * 0.3
+                    stop_loss = current_price - profit_protection
+                    target_price = current_price * 1.08  # 8% upside target
+                elif unrealized_pl_percent < -10:  # Losing hold
+                    # Give more room for recovery
+                    stop_loss = current_price * 0.85  # 15% stop loss
+                    target_price = current_price * 1.12  # 12% recovery target
+                else:  # Neutral position
+                    stop_loss = current_price * 0.92  # 8% stop loss
+                    target_price = current_price * 1.10  # 10% target
+            
+            # Ensure stop loss is not too close to current price (minimum 3%)
+            min_stop_distance = current_price * 0.03
+            if current_price - stop_loss < min_stop_distance:
+                stop_loss = current_price - min_stop_distance
+                
+            # Ensure target is higher than current price for BUY/HOLD, lower for SELL
+            if decision in ["BUY", "HOLD"] and target_price <= current_price:
+                target_price = current_price * 1.05  # Minimum 5% upside
+            elif decision == "SELL" and target_price >= current_price:
+                target_price = current_price * 0.98  # Minimum 2% downside for exit
+                
+            return round(target_price, 2), round(stop_loss, 2)
+            
+        except Exception as e:
+            logger.error(f"Error calculating price targets for {symbol}: {e}")
+            # Fallback to simple calculation
+            if decision == "BUY":
+                return round(current_price * 1.15, 2), round(current_price * 0.90, 2)
+            elif decision == "SELL":
+                return round(current_price * 0.95, 2), round(current_price * 0.90, 2)
+            else:  # HOLD
+                return round(current_price * 1.10, 2), round(current_price * 0.92, 2)
+    
+    def _extract_price_from_text(self, text: str, price_type: str) -> float:
+        """Extract price value from analysis text"""
+        try:
+            import re
+            pattern = rf"{price_type}.*?\$(\d+(?:\.\d+)?)"
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                return float(match.group(1))
+            return 0.0
+        except:
+            return 0.0
+    
+    def _extract_section(self, text: str, section_name: str):
         """Extract a section from the analysis text"""
         try:
             if section_name in text:

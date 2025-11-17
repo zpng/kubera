@@ -22,6 +22,7 @@ from agents.sentiment_twitter import TwitterSentimentAgent
 from agents.sentiment_reddit import RedditSentimentAgent
 from agents.risk_manager import RiskManagerAgent
 from agents.researcher import DeepThinkingResearcher
+from agents.options_strategy import OptionsStrategyAgent
 
 logger = logging.getLogger(__name__)
 
@@ -120,6 +121,13 @@ class PortfolioAnalysisWorkflow:
             )
             logger.info("✓ Deep Thinking Researcher initialized")
             
+            # Agent 9: Options Strategy (deepseek-reasoner)
+            self.options_strategy_agent = OptionsStrategyAgent(
+                openrouter_api_key=self.openrouter_api_key,
+                model="deepseek-reasoner"
+            )
+            logger.info("✓ Options Strategy Agent initialized")
+            
         except Exception as e:
             logger.error(f"Error initializing agents: {e}")
             raise
@@ -197,6 +205,16 @@ class PortfolioAnalysisWorkflow:
             workflow_results['final_recommendations'] = final_recommendations
             logger.info(f"✅ Final recommendations generated for {final_recommendations['total_stocks_analyzed']} stocks\n")
             
+            # STAGE 9: Options Strategy Recommendations
+            logger.info("📈 STAGE 9: Generating Options Strategy Recommendations...")
+            all_agent_data_with_recommendations = {
+                **all_agent_data,
+                'final_recommendations': final_recommendations
+            }
+            options_strategies = self.options_strategy_agent.run(all_agent_data_with_recommendations)
+            workflow_results['options_strategies'] = options_strategies
+            logger.info(f"✅ Options strategies generated for {options_strategies['total_strategies_generated']} stocks\n")
+            
             # Calculate execution time
             end_time = datetime.now()
             execution_time = (end_time - start_time).total_seconds()
@@ -258,6 +276,8 @@ class PortfolioAnalysisWorkflow:
         """
         final_recs = workflow_results.get('final_recommendations', {})
         recommendations = final_recs.get('recommendations', [])
+        options_strategies_data = workflow_results.get('options_strategies', {})
+        options_strategies = {item['symbol']: item['options_strategy'] for item in options_strategies_data.get('options_strategies', [])}
         
         summary = "📊 **PORTFOLIO ANALYSIS COMPLETE**\n\n"
         
@@ -284,11 +304,20 @@ class PortfolioAnalysisWorkflow:
         summary += "=" * 40 + "\n\n"
         
         for rec in recommendations:
+            symbol = rec['symbol']
             emoji = {"BUY": "🟢", "HOLD": "🟡", "SELL": "🔴"}.get(rec['decision'], "⚪")
             
-            summary += f"{emoji} **{rec['symbol']} - {rec['decision']}**\n"
+            summary += f"{emoji} **{symbol} - {rec['decision']}**\n"
             summary += f"Conviction: {rec['conviction']}/10\n"
-            summary += f"Target: ${rec['target_price']:.2f} | Stop: ${rec['stop_loss']:.2f}\n\n"
+            summary += f"🎯 Target: ${rec['target_price']:.2f} | 🛑 Stop: ${rec['stop_loss']:.2f}\n\n"
+            
+            # Add options strategy if available
+            if symbol in options_strategies:
+                options_data = options_strategies[symbol]
+                summary += f"📈 **Options Strategy:** {options_data['strategy']}\n"
+                summary += f"💰 Take Profit: {options_data['take_profit_strategy']}\n"
+                summary += f"🛡️ Stop Loss: {options_data['stop_loss_strategy']}\n"
+                summary += f"📊 Profit Target: {options_data['profit_target_percent']}% | Loss Limit: {options_data['loss_limit_percent']}%\n\n"
             
             summary += f"**Executive Summary:**\n{rec['executive_summary']}\n\n"
             
