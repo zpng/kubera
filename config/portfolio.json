@@ -13,16 +13,85 @@
     "available_cash_cny": 200000,
     "stocks": [
       {
+        "symbol": "AVGO",
+        "shares": 1,
+        "avg_cost": 339.98
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 1,
+        "avg_cost": 278.57
+      },
+      {
+        "symbol": "QQQ",
+        "shares": 1,
+        "avg_cost": 608.4
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 1,
+        "avg_cost": 503.29
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 1,
+        "avg_cost": 272.95
+      },
+      {
+        "symbol": "AMD",
+        "shares": 1,
+        "avg_cost": 247.96
+      },
+      {
+        "symbol": "AMZN",
+        "shares": 1,
+        "avg_cost": 237.58
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 1,
+        "avg_cost": 186.86
+      },
+      {
+        "symbol": "GLD",
+        "shares": 1,
+        "avg_cost": 382.87
+      },
+      {
+        "symbol": "META",
+        "shares": 1,
+        "avg_cost": 609.89
+      },
+      {
         "symbol": "TSM",
         "shares": 1,
         "avg_cost": 282.2
+      },
+      {
+        "symbol": "ORCL",
+        "shares": 1,
+        "avg_cost": 222.85
+      },
+      {
+        "symbol": "TSLA",
+        "shares": 1,
+        "avg_cost": 404.35
+      },
+      {
+        "symbol": "SHOP",
+        "shares": 1,
+        "avg_cost": 146.04
+      },
+      {
+        "symbol": "PYPL",
+        "shares": 1,
+        "avg_cost": 62.81
       }
     ]
   },
   "watchlist": {
     "description": "Future investment candidates - 2nd PRIORITY",
-    "stocks": [
-    ]
+    "stocks": []
   },
   "priority_order": [
     "portfolio",
