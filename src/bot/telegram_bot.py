@@ -407,16 +407,45 @@ class TelegramBot:
 
 **信心：** {conviction}/10
 """
+            
+            # Enhanced price targets display
             if target_price > 0:
-                stock_msg += f"**目标价：** ${target_price:.2f}\n"
+                stock_msg += f"🎯 **目标价：** ${target_price:.2f}\n"
+            
+            # Get stop loss from the research results
+            stop_loss = result.get("stop_loss", 0)
+            if stop_loss > 0:
+                stock_msg += f"🛑 **止损价：** ${stop_loss:.2f}\n"
+                
+            # Calculate risk/reward
+            current_price = result.get("current_price", target_price)  # Fallback to target if not available
+            if target_price > 0 and stop_loss > 0 and current_price > 0:
+                risk = abs(current_price - stop_loss)
+                reward = abs(target_price - current_price)
+                risk_reward_ratio = reward / risk if risk > 0 else 0
+                stock_msg += f"📊 **风险/回报：** 1:{risk_reward_ratio:.1f} (风险 ${risk:.2f} / 回报 ${reward:.2f})\n"
 
             if options:
                 strat_name = options.get("strategy") or "N/A"
                 summary = options.get("summary") or ""
                 params = options.get("parameters") or ""
-                stock_msg += "\n**期权策略：** " + str(strat_name) + "\n"
+                take_profit_strategy = options.get("take_profit_strategy", "")
+                stop_loss_strategy = options.get("stop_loss_strategy", "")
+                profit_target_percent = options.get("profit_target_percent", 0)
+                loss_limit_percent = options.get("loss_limit_percent", 0)
+                
+                stock_msg += "\n📈 **期权策略：** " + str(strat_name) + "\n"
+                
+                # Options take profit and stop loss
+                if take_profit_strategy:
+                    stock_msg += f"💰 **期权止盈：** {take_profit_strategy}\n"
+                if stop_loss_strategy:
+                    stock_msg += f"🛡️ **期权止损：** {stop_loss_strategy}\n"
+                if profit_target_percent > 0 and loss_limit_percent > 0:
+                    stock_msg += f"🎯 **期权目标：** 盈利 {profit_target_percent}% / 亏损限制 {loss_limit_percent}%\n"
+                    
                 if summary:
-                    stock_msg += "**理由：** " + str(summary) + "\n"
+                    stock_msg += "**策略理由：** " + str(summary) + "\n"
                 if params:
                     stock_msg += "**参数建议：** " + str(params) + "\n"
             
@@ -431,7 +460,21 @@ class TelegramBot:
                     parts = []
                     current_part = f"\n{emoji} **{symbol}** - {decision}\n\n**信心：** {conviction}/10\n"
                     if target_price > 0:
-                        current_part += f"**目标价：** ${target_price:.2f}\n"
+                        current_part += f"🎯 **目标价：** ${target_price:.2f}\n"
+                    if stop_loss > 0:
+                        current_part += f"🛑 **止损价：** ${stop_loss:.2f}\n"
+                    
+                    # Add options strategy summary to first part
+                    if options:
+                        strat_name = options.get("strategy") or "N/A"
+                        current_part += f"\n📈 **期权策略：** {str(strat_name)}\n"
+                        take_profit_strategy = options.get("take_profit_strategy", "")
+                        stop_loss_strategy = options.get("stop_loss_strategy", "")
+                        if take_profit_strategy:
+                            current_part += f"💰 **期权止盈：** {take_profit_strategy[:100]}...\n"
+                        if stop_loss_strategy:
+                            current_part += f"🛡️ **期权止损：** {stop_loss_strategy[:100]}...\n"
+                    
                     current_part += f"\n**详细分析（第 1 部分）：**\n"
                     parts.append(current_part)
                     

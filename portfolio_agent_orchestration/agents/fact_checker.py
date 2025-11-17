@@ -99,7 +99,7 @@ class FactCheckerAgent:
         
         # Check P/E ratio claims (distinguish from Forward P/E)
         if "p/e" in rationale.lower() or "pe ratio" in rationale.lower():
-            pe_match = re.search(r'P/?E.*?(-?\d+(?:\.\d+)?)', rationale, re.IGNORECASE)
+            pe_match = re.search(r'(?<!Forward\s)P/?E.*?(-?\d+(?:\.\d+)?)', rationale, re.IGNORECASE)
             if pe_match:
                 mentioned_pe = float(pe_match.group(1))
                 actual_pe = financial_metrics.get("pe_ratio")

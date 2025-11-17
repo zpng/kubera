@@ -359,7 +359,8 @@ Your Target Price: $[specify your target]
                         warnings.append(f"D/E ratio mismatch: mentioned {mentioned_value} vs actual {actual_de}")
 
             # Check P/E ratio mentions (distinguish from Forward P/E)
-            pe_mentions = re.findall(r'P/E.*?(\d+\.?\d*)', output_text, re.IGNORECASE)
+            # Use more specific regex to avoid matching "Forward P/E"
+            pe_mentions = re.findall(r'(?<!Forward\s)P/E.*?(\d+\.?\d*)', output_text, re.IGNORECASE)
             actual_pe = company.get('financial_metrics', {}).get('pe_ratio')
             actual_forward_pe = company.get('financial_metrics', {}).get('forward_pe')
             
