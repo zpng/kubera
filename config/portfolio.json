@@ -86,6 +86,11 @@
         "symbol": "PYPL",
         "shares": 1,
         "avg_cost": 62.81
+      },
+      {
+        "symbol": "MSTR",
+        "shares": 1,
+        "avg_cost": 250
       }
     ]
   },
