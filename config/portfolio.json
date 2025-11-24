@@ -91,6 +91,10 @@
         "symbol": "MSTR",
         "shares": 1,
         "avg_cost": 250
+      },{
+        "symbol": "CRCL",
+        "shares": 1,
+        "avg_cost": 70
       }
     ]
   },
