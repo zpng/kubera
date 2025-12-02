@@ -1,5 +1,6 @@
 import logging
 import json
+import re
 from typing import Dict, Any
 from datetime import datetime
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -114,8 +115,18 @@ class OptionsStrategyAgent(BaseAgent):
         try:
             response = self.invoke([system_msg, user_msg])
             text = response.content
+            
+            # Clean markdown code blocks
+            clean_text = text.strip()
+            if "```" in clean_text:
+                match = re.search(r"```(?:json)?\s*(.*?)\s*```", clean_text, re.DOTALL)
+                if match:
+                    clean_text = match.group(1)
+                else:
+                    clean_text = clean_text.replace("```json", "").replace("```", "")
+            
             try:
-                obj = json.loads(text)
+                obj = json.loads(clean_text)
                 # Ensure all required fields are present
                 default_strategy = {
                     "strategy": "N/A",
