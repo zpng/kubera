@@ -29,15 +29,15 @@ OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/ap
 # Model Selection for Each Agent
 # Note: deep_researcher has automatic fallback to deepseek-v3.1 if primary model fails
 AGENT_MODELS = {
-    "portfolio_loader": "deepseek-v3.1",
-    "historical_data": "deepseek-v3.1",
-    "news_fetcher": "gemini-2.0-flash-exp",
-    "company_info": "deepseek-reasoner",
-    "sentiment_twitter": "deepseek-reasoner",
-    "sentiment_reddit": "deepseek-reasoner",
-    "risk_manager": "deepseek-reasoner",
-    "deep_researcher": "deepseek-reasoner",
-    "options_strategy": "deepseek-reasoner"
+    "portfolio_loader": "gemini-3-pro-preview",
+    "historical_data": "gemini-3-pro-preview",
+    "news_fetcher": "gemini-3-pro-preview",
+    "company_info": "gemini-3-pro-preview",
+    "sentiment_twitter": "gemini-3-pro-preview",
+    "sentiment_reddit": "gemini-3-pro-preview",
+    "risk_manager": "gemini-3-pro-preview",
+    "deep_researcher": "gemini-3-pro-preview",
+    "options_strategy": "gemini-3-pro-preview"
 }
 
 # Agent Configuration
