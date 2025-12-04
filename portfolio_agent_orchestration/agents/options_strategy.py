@@ -113,82 +113,110 @@ class OptionsStrategyAgent(BaseAgent):
     def recommend_for_symbol(self, symbol: str, all_data: Dict[str, Any]) -> Dict[str, Any]:
         system_msg = SystemMessage(content="你是期权策略专家，依据输入做稳健、可执行的策略推荐，中文输出，严格返回包含止盈止损的完整JSON。")
         user_msg = HumanMessage(content=self.create_prompt(symbol, all_data))
-        try:
-            response = self.invoke([system_msg, user_msg])
-            text = response.content
-            
-            # Clean markdown code blocks
-            clean_text = text.strip()
-            if "```" in clean_text:
-                match = re.search(r"```(?:json)?\s*(.*?)\s*```", clean_text, re.DOTALL)
-                if match:
-                    clean_text = match.group(1)
-                else:
-                    clean_text = clean_text.replace("```json", "").replace("```", "")
-            
+        
+        max_retries = 3
+        default_parameters = "建议选择虚值期权（OTM），到期日30-45天"
+        
+        for attempt in range(max_retries):
             try:
-                obj = json.loads(clean_text)
-                # Ensure all required fields are present
-                default_strategy = {
-                    "strategy": "N/A",
-                    "summary": "模型未返回结构化JSON",
-                    "parameters": "建议选择虚值期权（OTM），到期日30-45天",
-                    "rationale": ["分析未完成"],
-                    "risk_notes": "",
-                    "suitability": "",
-                    "take_profit_strategy": "达到目标利润时平仓",
-                    "stop_loss_strategy": "权利金损失50%时止损",
-                    "profit_target_percent": 50.0,
-                    "loss_limit_percent": 50.0,
-                    "position_size_recommendation": "建议小仓位试探",
-                    "adjustment_strategy": "根据市场变化调整",
-                    "exit_conditions": ["达到止盈点", "达到止损点", "临近到期"]
-                }
+                response = self.invoke([system_msg, user_msg])
+                text = response.content
                 
-                # Merge with defaults to ensure all fields exist
-                for key, default_value in default_strategy.items():
-                    if key not in obj:
-                        obj[key] = default_value
+                # Clean markdown code blocks
+                clean_text = text.strip()
+                if "```" in clean_text:
+                    match = re.search(r"```(?:json)?\s*(.*?)\s*```", clean_text, re.DOTALL)
+                    if match:
+                        clean_text = match.group(1)
+                    else:
+                        clean_text = clean_text.replace("```json", "").replace("```", "")
                 
-            except Exception:
-                obj = {
-                    "strategy": "N/A",
-                    "summary": "模型未返回结构化 JSON，以下为原始说明",
-                    "parameters": "建议暂缓期权操作",
-                    "rationale": [text[:300]],
-                    "risk_notes": "",
-                    "suitability": "",
-                    "take_profit_strategy": "达到目标利润时平仓",
-                    "stop_loss_strategy": "权利金损失50%时止损",
-                    "profit_target_percent": 50.0,
-                    "loss_limit_percent": 50.0,
-                    "position_size_recommendation": "建议小仓位试探",
-                    "adjustment_strategy": "根据市场变化调整",
-                    "exit_conditions": ["达到止盈点", "达到止损点", "临近到期"]
-                }
-            
-            if not isinstance(obj.get("rationale", []), list):
-                obj["rationale"] = [str(obj.get("rationale", ""))]
-            obj["timestamp"] = datetime.now().isoformat()
-            return obj
-        except Exception as e:
-            logger.error(f"Options strategy failed for {symbol}: {e}")
-            return {
-                "strategy": "N/A",
-                "summary": "期权策略生成失败，建议使用现货管理或等待条件改善",
-                "parameters": "建议暂缓期权操作",
-                "rationale": [str(e)],
-                "risk_notes": "",
-                "suitability": "",
-                "take_profit_strategy": "系统错误，请手动设置止盈",
-                "stop_loss_strategy": "系统错误，请手动设置止损",
-                "profit_target_percent": 25.0,
-                "loss_limit_percent": 50.0,
-                "position_size_recommendation": "暂时不建议期权交易",
-                "adjustment_strategy": "等待系统恢复",
-                "exit_conditions": ["系统错误，建议观望"],
-                "timestamp": datetime.now().isoformat()
-            }
+                try:
+                    obj = json.loads(clean_text)
+                    # Ensure all required fields are present
+                    default_strategy = {
+                        "strategy": "N/A",
+                        "summary": "模型未返回结构化JSON",
+                        "parameters": default_parameters,
+                        "rationale": ["分析未完成"],
+                        "risk_notes": "",
+                        "suitability": "",
+                        "take_profit_strategy": "达到目标利润时平仓",
+                        "stop_loss_strategy": "权利金损失50%时止损",
+                        "profit_target_percent": 50.0,
+                        "loss_limit_percent": 50.0,
+                        "position_size_recommendation": "建议小仓位试探",
+                        "adjustment_strategy": "根据市场变化调整",
+                        "exit_conditions": ["达到止盈点", "达到止损点", "临近到期"]
+                    }
+                    
+                    # Merge with defaults to ensure all fields exist
+                    for key, default_value in default_strategy.items():
+                        if key not in obj:
+                            obj[key] = default_value
+                            
+                    # Validation: Check parameters
+                    params = obj.get("parameters", "")
+                    if not params or params == default_parameters or len(params) < 10:
+                        if attempt < max_retries - 1:
+                            logger.warning(f"⚠️ Attempt {attempt + 1}/{max_retries}: Missing options parameters for {symbol}. Retrying...")
+                            continue
+                        else:
+                            logger.warning(f"❌ Failed to get valid parameters for {symbol} after {max_retries} attempts.")
+                    
+                except Exception:
+                    if attempt < max_retries - 1:
+                         logger.warning(f"⚠️ Attempt {attempt + 1}/{max_retries}: JSON parse failed for {symbol}. Retrying...")
+                         continue
+                         
+                    obj = {
+                        "strategy": "N/A",
+                        "summary": "模型未返回结构化 JSON，以下为原始说明",
+                        "parameters": "建议暂缓期权操作",
+                        "rationale": [text[:300]],
+                        "risk_notes": "",
+                        "suitability": "",
+                        "take_profit_strategy": "达到目标利润时平仓",
+                        "stop_loss_strategy": "权利金损失50%时止损",
+                        "profit_target_percent": 50.0,
+                        "loss_limit_percent": 50.0,
+                        "position_size_recommendation": "建议小仓位试探",
+                        "adjustment_strategy": "根据市场变化调整",
+                        "exit_conditions": ["达到止盈点", "达到止损点", "临近到期"]
+                    }
+                
+                if not isinstance(obj.get("rationale", []), list):
+                    obj["rationale"] = [str(obj.get("rationale", ""))]
+                obj["timestamp"] = datetime.now().isoformat()
+                return obj
+            except Exception as e:
+                logger.error(f"Options strategy failed for {symbol} (Attempt {attempt + 1}): {e}")
+                if attempt == max_retries - 1:
+                    return {
+                        "strategy": "N/A",
+                        "summary": "期权策略生成失败，建议使用现货管理或等待条件改善",
+                        "parameters": "建议暂缓期权操作",
+                        "rationale": [str(e)],
+                        "risk_notes": "",
+                        "suitability": "",
+                        "take_profit_strategy": "系统错误，请手动设置止盈",
+                        "stop_loss_strategy": "系统错误，请手动设置止损",
+                        "profit_target_percent": 25.0,
+                        "loss_limit_percent": 50.0,
+                        "position_size_recommendation": "暂时不建议期权交易",
+                        "adjustment_strategy": "等待系统恢复",
+                        "exit_conditions": ["系统错误，建议观望"],
+                        "timestamp": datetime.now().isoformat()
+                    }
+        
+        # Fallback
+        return {
+            "strategy": "N/A",
+            "summary": "Max retries exceeded",
+            "parameters": "建议暂缓期权操作",
+            "rationale": ["多次尝试失败"],
+            "timestamp": datetime.now().isoformat()
+        }
 
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
         symbols = state.get("stock_symbols", [])

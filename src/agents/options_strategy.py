@@ -191,35 +191,52 @@ Provide a comprehensive options strategy recommendation with:
         unrealized_pl_percent = ((current_price - avg_cost) / avg_cost * 100) if avg_cost > 0 else 0
         covered_call_eligible = shares >= 100
         
-        try:
-            # Invoke LLM with comprehensive data
-            chain = prompt | self.llm
-            response = chain.invoke({
-                "symbol": symbol,
-                "stock_decision": stock_decision,
-                "conviction": conviction,
-                "current_price": current_price,
-                "avg_cost": avg_cost,
-                "shares": shares,
-                "risk_level": risk_level,
-                "volatility": volatility,
-                "technical_score": technical_score,
-                "fundamental_score": fundamental_score,
-                "unrealized_pl_percent": unrealized_pl_percent,
-                "position_size": shares,
-                "covered_call_eligible": "是" if covered_call_eligible else "否"
-            })
-            
-            # Parse the JSON response
-            strategy_data = self._parse_options_strategy(response.content)
-            
-            logger.info(f"✓ {symbol}: Recommended {strategy_data.strategy} strategy")
-            return strategy_data
-            
-        except Exception as e:
-            logger.error(f"Error analyzing options for {symbol}: {e}")
-            # Return default strategy
-            return self._get_default_strategy(symbol, stock_decision, covered_call_eligible)
+        max_retries = 3
+        default_parameters = "建议选择虚值期权，到期日30-45天"
+        
+        for attempt in range(max_retries):
+            try:
+                # Invoke LLM with comprehensive data
+                chain = prompt | self.llm
+                response = chain.invoke({
+                    "symbol": symbol,
+                    "stock_decision": stock_decision,
+                    "conviction": conviction,
+                    "current_price": current_price,
+                    "avg_cost": avg_cost,
+                    "shares": shares,
+                    "risk_level": risk_level,
+                    "volatility": volatility,
+                    "technical_score": technical_score,
+                    "fundamental_score": fundamental_score,
+                    "unrealized_pl_percent": unrealized_pl_percent,
+                    "position_size": shares,
+                    "covered_call_eligible": "是" if covered_call_eligible else "否"
+                })
+                
+                # Parse the JSON response
+                strategy_data = self._parse_options_strategy(response.content)
+                
+                # Validation: Check if parameters are provided and meaningful
+                params = strategy_data.parameters
+                if not params or params == default_parameters or len(params) < 10:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"⚠️ Attempt {attempt + 1}/{max_retries}: Missing options parameters for {symbol}. Retrying...")
+                        continue
+                    else:
+                        logger.warning(f"❌ Failed to get valid parameters for {symbol} after {max_retries} attempts.")
+                
+                logger.info(f"✓ {symbol}: Recommended {strategy_data.strategy} strategy")
+                return strategy_data
+                
+            except Exception as e:
+                logger.error(f"Error analyzing options for {symbol} (Attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt == max_retries - 1:
+                    # Return default strategy
+                    return self._get_default_strategy(symbol, stock_decision, covered_call_eligible)
+
+        # Should not reach here if exceptions are handled correctly, but as a fallback
+        return self._get_default_strategy(symbol, stock_decision, covered_call_eligible)
     
     def _parse_options_strategy(self, content: str) -> OptionsStrategy:
         """Parse LLM response into structured options strategy"""
