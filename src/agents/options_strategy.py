@@ -153,18 +153,19 @@ Sufficient for Covered Call: {covered_call_eligible}
 Provide a comprehensive options strategy recommendation with:
 
 1. **STRATEGY SELECTION**: Choose the most appropriate strategy based on the stock analysis
-2. **TAKE PROFIT STRATEGY**: When to take profits (premium decay, underlying price targets, time-based)
-3. **STOP LOSS STRATEGY**: When to cut losses (underlying price movement, premium increase, time stop)
-4. **POSITION SIZING**: How many contracts to trade based on portfolio size
-5. **ADJUSTMENT STRATEGY**: How to adjust if underlying moves against position
-6. **EXIT CONDITIONS**: Specific conditions for closing the position
+2. **PARAMETERS**: Specific strike price (relative to current price) and expiration date
+3. **TAKE PROFIT STRATEGY**: When to take profits (premium decay, underlying price targets, time-based)
+4. **STOP LOSS STRATEGY**: When to cut losses (underlying price movement, premium increase, time stop)
+5. **POSITION SIZING**: How many contracts to trade based on portfolio size
+6. **ADJUSTMENT STRATEGY**: How to adjust if underlying moves against position
+7. **EXIT CONDITIONS**: Specific conditions for closing the position
 
 **OUTPUT FORMAT:**
 ```json
-{
+{{
     "strategy": "Strategy Name",
     "summary": "中文一句话总结",
-    "parameters": "建议参数描述",
+    "parameters": "具体的期权参数建议（必须包含：行权价、到期日。例如：行权价$150 / 现价+5%，到期日30-45天）",
     "rationale": "详细理由中文",
     "risk_notes": "风险说明",
     "suitability": "适用场景",
@@ -175,7 +176,7 @@ Provide a comprehensive options strategy recommendation with:
     "position_size_recommendation": "仓位建议",
     "adjustment_strategy": "调整策略",
     "exit_conditions": ["条件1", "条件2", "条件3"]
-}
+}}
 ```
 
 **STRATEGY GUIDELINES:**
@@ -234,7 +235,7 @@ Provide a comprehensive options strategy recommendation with:
             return OptionsStrategy(
                 strategy=strategy_data.get('strategy', 'Covered Call'),
                 summary=strategy_data.get('summary', '基础期权策略'),
-                parameters=strategy_data.get('parameters', '标准参数'),
+                parameters=strategy_data.get('parameters', '建议选择虚值期权，到期日30-45天'),
                 rationale=strategy_data.get('rationale', '基于股票分析推荐'),
                 risk_notes=strategy_data.get('risk_notes', '标准风险提示'),
                 suitability=strategy_data.get('suitability', '适用于当前市场情况'),
@@ -385,6 +386,7 @@ def test_options_strategy_agent():
         
         print(f"\n✅ Test Results:")
         print(f"   - Strategy: {strategy.strategy}")
+        print(f"   - Parameters: {strategy.parameters}")
         print(f"   - Take Profit: {strategy.take_profit_strategy}")
         print(f"   - Stop Loss: {strategy.stop_loss_strategy}")
         print(f"   - Profit Target: {strategy.profit_target_percent}%")

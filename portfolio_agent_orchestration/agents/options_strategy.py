@@ -80,14 +80,14 @@ class OptionsStrategyAgent(BaseAgent):
 2. 提供具体的止盈止损建议，包括权利金目标和风险限制
 3. 考虑持仓数量是否满足备兑开仓要求（≥100股）
 4. 结合波动率和时间衰减因素
-5. 必须提供明确的期权参数建议，包括行权价（相对于当前价格的位置）和到期日（短期/中期/长期）
+5. 必须提供明确的期权参数建议，包括具体的行权价（如$150）和到期日（如30天）
 
 **输出格式（必须返回JSON）：**
 ```json
 {{
     "strategy": "策略名称（如：备兑看涨期权）",
     "summary": "策略一句话总结",
-    "parameters": "具体的期权参数建议（例如：行权价$150，到期日30天后）",
+    "parameters": "具体的期权参数建议（必须包含：行权价、到期日。例如：行权价$150 / 现价+5%，到期日30-45天）",
     "rationale": "详细选择理由（中文，分点说明）",
     "risk_notes": "风险提示和注意事项",
     "suitability": "适用投资者类型",
@@ -132,7 +132,7 @@ class OptionsStrategyAgent(BaseAgent):
                 default_strategy = {
                     "strategy": "N/A",
                     "summary": "模型未返回结构化JSON",
-                    "parameters": "",
+                    "parameters": "建议选择虚值期权（OTM），到期日30-45天",
                     "rationale": ["分析未完成"],
                     "risk_notes": "",
                     "suitability": "",
@@ -154,7 +154,7 @@ class OptionsStrategyAgent(BaseAgent):
                 obj = {
                     "strategy": "N/A",
                     "summary": "模型未返回结构化 JSON，以下为原始说明",
-                    "parameters": "",
+                    "parameters": "建议暂缓期权操作",
                     "rationale": [text[:300]],
                     "risk_notes": "",
                     "suitability": "",
@@ -176,7 +176,7 @@ class OptionsStrategyAgent(BaseAgent):
             return {
                 "strategy": "N/A",
                 "summary": "期权策略生成失败，建议使用现货管理或等待条件改善",
-                "parameters": "",
+                "parameters": "建议暂缓期权操作",
                 "rationale": [str(e)],
                 "risk_notes": "",
                 "suitability": "",
